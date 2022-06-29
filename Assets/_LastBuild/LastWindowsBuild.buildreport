@@ -1,0 +1,997 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1126 &-3771831695939388752
+PackedAssets:
+  m_File: 1
+  m_ShortPath: BuildPlayer-SampleScene.sharedAssets
+  m_Overhead: 132471
+  m_Contents:
+  - fileID: 1
+    classID: 150
+    packedSize: 145
+    offset: 134128
+    sourceAssetGUID: 00000000000000000000000000000000
+    buildTimeAssetPath: 
+  - fileID: 2
+    classID: 142
+    packedSize: 160
+    offset: 134280
+    sourceAssetGUID: 00000000000000000000000000000000
+    buildTimeAssetPath: 
+  - fileID: 3
+    classID: 21
+    packedSize: 1052
+    offset: 134440
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 4
+    classID: 21
+    packedSize: 252
+    offset: 135496
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 5
+    classID: 21
+    packedSize: 204
+    offset: 135752
+    sourceAssetGUID: c815f7613a04b724089c206857e57c6a
+    buildTimeAssetPath: Assets/VRCSDK/Sample Assets/Materials/MirrorReflection.mat
+  - fileID: 6
+    classID: 21
+    packedSize: 932
+    offset: 135960
+    sourceAssetGUID: 1c987494452b85f4ab4cac3322415907
+    buildTimeAssetPath: Assets/VRChat Examples/SampleAssetsSet/Materials/SampleAssets_matte.mat
+  - fileID: 7
+    classID: 21
+    packedSize: 184
+    offset: 136896
+    sourceAssetGUID: aab8f333820109541b4d48f06f5c6ae6
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/Cloud_05_A01_M.mat
+  - fileID: 8
+    classID: 21
+    packedSize: 1628
+    offset: 137080
+    sourceAssetGUID: 63ad6f5f59b0fac49bdc26bfa029f7c8
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_contrail_ship.mat
+  - fileID: 9
+    classID: 21
+    packedSize: 584
+    offset: 138712
+    sourceAssetGUID: a1a558f7f5e99ff459856e2ef0b174fa
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_energy_circle.mat
+  - fileID: 10
+    classID: 21
+    packedSize: 300
+    offset: 139296
+    sourceAssetGUID: 37c4e678af479c848b1c38ecda04c166
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_smoke_1.mat
+  - fileID: 11
+    classID: 21
+    packedSize: 300
+    offset: 139600
+    sourceAssetGUID: 25b64b93663a9844a90df760b8149e4a
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_spark_1.mat
+  - fileID: 12
+    classID: 21
+    packedSize: 588
+    offset: 139904
+    sourceAssetGUID: 1150efc5c0a88fb47901de03ae7ed188
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_thruster_flare.mat
+  - fileID: 13
+    classID: 21
+    packedSize: 648
+    offset: 140496
+    sourceAssetGUID: 44b6c0d6200b5504c99be53580af8c80
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_fx_wiggly_trail.mat
+  - fileID: 14
+    classID: 21
+    packedSize: 300
+    offset: 141144
+    sourceAssetGUID: 5e92a66302061b44eab8059539378b64
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_FX/Used/mat_spawn_flash.mat
+  - fileID: 15
+    classID: 21
+    packedSize: 932
+    offset: 141448
+    sourceAssetGUID: f989190931aae5648ab3625cff59e73f
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Lance/mat_lance_bar_thing.mat
+  - fileID: 16
+    classID: 21
+    packedSize: 928
+    offset: 142384
+    sourceAssetGUID: bddf37ce78e112a42922f2486c8ecee9
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Lance/mat_lance_body.mat
+  - fileID: 17
+    classID: 21
+    packedSize: 928
+    offset: 143312
+    sourceAssetGUID: 4d003e37784b626448640ebc21544f46
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Lance/mat_lance_engine.mat
+  - fileID: 18
+    classID: 21
+    packedSize: 976
+    offset: 144240
+    sourceAssetGUID: 2a3be86b8b14f494288a7bdda4acd031
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Shockwave/mat_shockwave_body.mat
+  - fileID: 19
+    classID: 21
+    packedSize: 944
+    offset: 145216
+    sourceAssetGUID: bb8740dda16928442ac486f51715ee7e
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Shockwave/mat_shockwave_engine.mat
+  - fileID: 20
+    classID: 21
+    packedSize: 928
+    offset: 146160
+    sourceAssetGUID: a46dac2f23053984b9bef6296af4f267
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Thorn/mat_thorn_body.mat
+  - fileID: 21
+    classID: 21
+    packedSize: 944
+    offset: 147088
+    sourceAssetGUID: 64ad591c35d376d4894a12b5de7ca6a4
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Wormhole/mat_wormhole_body.mat
+  - fileID: 22
+    classID: 21
+    packedSize: 932
+    offset: 148032
+    sourceAssetGUID: eaa62972b526e754d953dc28dfd24fb7
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Materials/Mat_Ships/Mat_Wormhole/mat_wormhole_engine.mat
+  - fileID: 23
+    classID: 21
+    packedSize: 920
+    offset: 148968
+    sourceAssetGUID: 5e296db4464fed24f9b69691642b6721
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Lance/Materials/Engine1.mat
+  - fileID: 24
+    classID: 21
+    packedSize: 892
+    offset: 149888
+    sourceAssetGUID: 5d050b6b81943f84f9f00d2d25e928b1
+    buildTimeAssetPath: Assets/WorldAssets/Materials/Black.mat
+  - fileID: 25
+    classID: 21
+    packedSize: 564
+    offset: 150784
+    sourceAssetGUID: 5f7d030eddcd54f48ad751735fdc80b3
+    buildTimeAssetPath: Assets/WorldAssets/Materials/Screen.mat
+  - fileID: 26
+    classID: 28
+    packedSize: 5564
+    offset: 151352
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 27
+    classID: 28
+    packedSize: 5568
+    offset: 156920
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 28
+    classID: 28
+    packedSize: 5576
+    offset: 162488
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 29
+    classID: 28
+    packedSize: 21944
+    offset: 168064
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 30
+    classID: 28
+    packedSize: 270856
+    offset: 190008
+    sourceAssetGUID: 0337ed066a775ae4a891475fd15522ef
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/tex_lance_engine_metallic_high.png
+  - fileID: 31
+    classID: 28
+    packedSize: 180480
+    offset: 460864
+    sourceAssetGUID: 1883e5419d6e1114789f9ba05033a5f2
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/Tex_Wormhole_Blue/Tex_Wormhole_Body_Blue/tex_wormhole_body_albedo_blue_high.png
+  - fileID: 32
+    classID: 28
+    packedSize: 18092
+    offset: 641344
+    sourceAssetGUID: 1b478bccfd68d354f904b93e211bff60
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_body_emission_high.png
+  - fileID: 33
+    classID: 28
+    packedSize: 337164
+    offset: 659440
+    sourceAssetGUID: 28e0f96bffbc63b4e94f23d86c11a3cc
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/tex_lance_engine_normal_high.png
+  - fileID: 34
+    classID: 28
+    packedSize: 205492
+    offset: 996608
+    sourceAssetGUID: 2adaa9fa213c3dc4993bf4d345ed7a45
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/Tex_Shockwave_Red/Tex_Shockwave_Engine_Red/tex_shockwave_engine_albedo_red_high.png
+  - fileID: 35
+    classID: 28
+    packedSize: 8308
+    offset: 1202104
+    sourceAssetGUID: 3565388ce82aded47ab9ab5a08f59bf0
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_fx_wave_noise_1.jpg
+  - fileID: 36
+    classID: 28
+    packedSize: 335456
+    offset: 1210416
+    sourceAssetGUID: 35b8a02a06bc4b44495ce14ebd97802f
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_body_metallic_high.png
+  - fileID: 37
+    classID: 28
+    packedSize: 1398252
+    offset: 1545872
+    sourceAssetGUID: 374f879b0c580e0459a957162191a237
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Thorn/tex_thorn_body_normal_high.png
+  - fileID: 38
+    classID: 28
+    packedSize: 87524
+    offset: 2944128
+    sourceAssetGUID: 3fac5d1f9f8cca54a8b7f80d82f7cfd3
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_fx_circle_fade_1.png
+  - fileID: 39
+    classID: 28
+    packedSize: 352848
+    offset: 3031656
+    sourceAssetGUID: 49d16b4acf89dfc458d4428421f3b1e9
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_body_normal_high.png
+  - fileID: 40
+    classID: 28
+    packedSize: 1048700
+    offset: 3384504
+    sourceAssetGUID: 49d9b5daa18c2fb4ab6b9b925b1afdf4
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Thorn/tex_thorn_body_metallic_high.png
+  - fileID: 41
+    classID: 28
+    packedSize: 87528
+    offset: 4433208
+    sourceAssetGUID: 49e25ac9e7fa343a68d9dad65a225dd5
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/particle-object-smoke.psd
+  - fileID: 42
+    classID: 28
+    packedSize: 1398268
+    offset: 4520736
+    sourceAssetGUID: 4ba9f24739c8721499ae85110ba2157d
+    buildTimeAssetPath: Assets/VRChat Examples/SampleAssetsSet/Textures/texture_matte/SampleAssetsSet_V1_phong1_MetallicSmoothness.png
+  - fileID: 43
+    classID: 28
+    packedSize: 185140
+    offset: 5919008
+    sourceAssetGUID: 50d8594c2f708634bafac24b1b1dba2f
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/Tex_Wormhole_Blue/Tex_Wormhole_Engine_Blue/tex_wormhole_engine_albedo_blue_high.png
+  - fileID: 44
+    classID: 28
+    packedSize: 1398256
+    offset: 6104152
+    sourceAssetGUID: 5e07d6e71c9ed3f409237935b1c7a96e
+    buildTimeAssetPath: Assets/VRChat Examples/SampleAssetsSet/Textures/texture_matte/SampleAssetsSet_V1_phong1_Normal.png
+  - fileID: 45
+    classID: 28
+    packedSize: 87528
+    offset: 7502408
+    sourceAssetGUID: 5e62ef35fd7db0349a9d2ce70ce4d385
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_fx_thruster_flare.png
+  - fileID: 46
+    classID: 28
+    packedSize: 87524
+    offset: 7589936
+    sourceAssetGUID: 7b207ec329d546d41910956f94af43e7
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_fx_contrail_3.png
+  - fileID: 47
+    classID: 28
+    packedSize: 345932
+    offset: 7677464
+    sourceAssetGUID: 7be2a3925f24b684c93d8cdb117dda37
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_engine_normal_high.png
+  - fileID: 48
+    classID: 28
+    packedSize: 369860
+    offset: 8023400
+    sourceAssetGUID: 9030dd3875e5a7146a5b436182241ab6
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_engine_normal_high.png
+  - fileID: 49
+    classID: 28
+    packedSize: 294196
+    offset: 8393264
+    sourceAssetGUID: 95f9e04ab362f5445b8c2323502ab6ce
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_engine_metallic_high.png
+  - fileID: 50
+    classID: 28
+    packedSize: 190296
+    offset: 8687464
+    sourceAssetGUID: a5ddee3c50ffe4140ba8c6d621f6f359
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/Tex_Lance_Gold/Tex_Lance_Engine_Gold/tex_lance_engine_albedo_gold_high.png
+  - fileID: 51
+    classID: 28
+    packedSize: 21984
+    offset: 8877760
+    sourceAssetGUID: a9d81228b5216db48809f28a4fa740f2
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/Circle_14_T01.png
+  - fileID: 52
+    classID: 28
+    packedSize: 352228
+    offset: 8899744
+    sourceAssetGUID: aaf05b2dc81bff14bbc318b5729f98a4
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_body_normal_high.png
+  - fileID: 53
+    classID: 28
+    packedSize: 2796356
+    offset: 9251976
+    sourceAssetGUID: ab4e1feb84159f146bd1666598bad003
+    buildTimeAssetPath: Assets/VRChat Examples/SampleAssetsSet/Textures/texture_matte/SampleAssetsSet_V1_phong1_AlbedoTransparency.png
+  - fileID: 54
+    classID: 28
+    packedSize: 11044
+    offset: 12048336
+    sourceAssetGUID: af7f6c3babe62a44bb88b68c6e69a522
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/Cloud_05_A01.png
+  - fileID: 55
+    classID: 28
+    packedSize: 21996
+    offset: 12059384
+    sourceAssetGUID: b20e605d5eab3c9428be874d3a71d699
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/particle-object-spark-horiz.png
+  - fileID: 56
+    classID: 28
+    packedSize: 1045628
+    offset: 12081384
+    sourceAssetGUID: b6d3749570cd86e47880aba865259820
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_fx_noise_map_1.jpg
+  - fileID: 57
+    classID: 28
+    packedSize: 135780
+    offset: 13127016
+    sourceAssetGUID: b972b4f0be032034b9a77096e86183cf
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/Tex_Lance_Gold/Tex_Lance_Body_Gold/tex_lance_body_albedo_gold_high.png
+  - fileID: 58
+    classID: 28
+    packedSize: 58704
+    offset: 13262800
+    sourceAssetGUID: bf4cbfdc7210ebc41aa653689ccfba56
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_engine_emission_high.png
+  - fileID: 59
+    classID: 28
+    packedSize: 1048700
+    offset: 13321504
+    sourceAssetGUID: c875f274f4744fc4fb9ee86fb4f9daa0
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/tex_lance_body_metallic_high.png
+  - fileID: 60
+    classID: 28
+    packedSize: 202136
+    offset: 14370208
+    sourceAssetGUID: c9a550c47b7b69a4692fc8dd0d841031
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/Tex_Shockwave_Red/Tex_Shockwave_Body_Red/tex_shockwave_body_albedo_red_high.png
+  - fileID: 61
+    classID: 28
+    packedSize: 349664
+    offset: 14572344
+    sourceAssetGUID: c9ddd2876f4c3c14a987516a06bf0324
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Effects/Tex_FX_Used/tex_norm_waves.jpg
+  - fileID: 62
+    classID: 28
+    packedSize: 524416
+    offset: 14922008
+    sourceAssetGUID: d0ecc484e94c45d458671e7daebff74a
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Thorn/Tex_Thorn_Green/Tex_Thorn_Body_Green/tex_thorn_body_albedo_green_high.png
+  - fileID: 63
+    classID: 28
+    packedSize: 263296
+    offset: 15446424
+    sourceAssetGUID: d6fac43786ae9d5428c187fc6f1d1e5a
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Lance/tex_lance_body_normal_high.png
+  - fileID: 64
+    classID: 28
+    packedSize: 413304
+    offset: 15709720
+    sourceAssetGUID: de0b4b8c6a55fa64dbedb192625d5d4b
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Shockwave/tex_shockwave_engine_metallic_high.png
+  - fileID: 65
+    classID: 28
+    packedSize: 34636
+    offset: 16123024
+    sourceAssetGUID: ed9babbe8b517604eb7b50cca169088b
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_engine_emission_high.png
+  - fileID: 66
+    classID: 28
+    packedSize: 333240
+    offset: 16157664
+    sourceAssetGUID: f13a5faf30c5b3743bacfb7306e6df63
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_body_metallic_high.png
+  - fileID: 67
+    classID: 28
+    packedSize: 32880
+    offset: 16490904
+    sourceAssetGUID: f57c7792b491a384cb66ec3cb77d91f8
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Textures/Tex_Ships/Tex_Wormhole/tex_wormhole_body_emission_high.png
+  - fileID: 68
+    classID: 43
+    packedSize: 126976
+    offset: 16523784
+    sourceAssetGUID: 137a1794114cb694ba509d4c8544d839
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Lance/ship_lance_hires.fbx
+  - fileID: 69
+    classID: 43
+    packedSize: 1035324
+    offset: 16650760
+    sourceAssetGUID: 29f422bff94060444a70f5a72fddbed1
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Thorn/ship_thorn_hires.fbx
+  - fileID: 70
+    classID: 43
+    packedSize: 984084
+    offset: 17686088
+    sourceAssetGUID: 6a19bdd91b72603458d32030816a5861
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Shockwave/model_shockwave_hires.fbx
+  - fileID: 71
+    classID: 43
+    packedSize: 1467004
+    offset: 18670176
+    sourceAssetGUID: c19b67911ac3f444384c23c8692a3e9c
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Wormhole/model_wormhole_hires.fbx
+  - fileID: 72
+    classID: 43
+    packedSize: 1065668
+    offset: 20137184
+    sourceAssetGUID: 137a1794114cb694ba509d4c8544d839
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Lance/ship_lance_hires.fbx
+  - fileID: 73
+    classID: 43
+    packedSize: 348728
+    offset: 21202856
+    sourceAssetGUID: c19b67911ac3f444384c23c8692a3e9c
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Wormhole/model_wormhole_hires.fbx
+  - fileID: 74
+    classID: 43
+    packedSize: 23420
+    offset: 21551584
+    sourceAssetGUID: 70108d78e82c2ec488d6b504865508e0
+    buildTimeAssetPath: Assets/VRChat Examples/SampleAssetsSet/SampleAssetsSet_V1.fbx
+  - fileID: 75
+    classID: 48
+    packedSize: 749280
+    offset: 21575008
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 76
+    classID: 48
+    packedSize: 13452
+    offset: 22324288
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 77
+    classID: 48
+    packedSize: 8436
+    offset: 22337744
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 78
+    classID: 48
+    packedSize: 8348
+    offset: 22346184
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 79
+    classID: 48
+    packedSize: 14948
+    offset: 22354536
+    sourceAssetGUID: 519373b923bc7e74487decd307085914
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Shaders/shad_fx_distortion_particle.shader
+  - fileID: 80
+    classID: 48
+    packedSize: 5672
+    offset: 22369488
+    sourceAssetGUID: 693137b858e4dc64c83be531351f45e6
+    buildTimeAssetPath: Assets/VRCSDK/Sample Assets/Shaders/Mirror.shader
+  - fileID: 81
+    classID: 48
+    packedSize: 138192
+    offset: 22375160
+    sourceAssetGUID: 9788d723ed7eac946a9a599e4a6ba940
+    buildTimeAssetPath: Assets/VRCSDK/Sample Assets/Shaders/Video-RealtimeEmissiveGamma.shader
+  - fileID: 82
+    classID: 48
+    packedSize: 19208
+    offset: 22513352
+    sourceAssetGUID: a463796d69bedbe45b05081163360bc2
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Shaders/shad_texture_wispy_overlay.shader
+  - fileID: 83
+    classID: 74
+    packedSize: 12188
+    offset: 22532560
+    sourceAssetGUID: 137a1794114cb694ba509d4c8544d839
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Lance/ship_lance_hires.fbx
+  - fileID: 84
+    classID: 74
+    packedSize: 9244
+    offset: 22544752
+    sourceAssetGUID: 29f422bff94060444a70f5a72fddbed1
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Thorn/ship_thorn_hires.fbx
+  - fileID: 85
+    classID: 74
+    packedSize: 27364
+    offset: 22554000
+    sourceAssetGUID: 9ca125d8895c5b9488f4ee5b88c47a0a
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Animations/Anim_Ships/Anim_Shockwave/idle
+      anima .fbx
+  - fileID: 86
+    classID: 74
+    packedSize: 18708
+    offset: 22581368
+    sourceAssetGUID: c19b67911ac3f444384c23c8692a3e9c
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Wormhole/model_wormhole_hires.fbx
+  - fileID: 87
+    classID: 84
+    packedSize: 88
+    offset: 22600080
+    sourceAssetGUID: b10ca943e6cba3345ace2d818d9509b7
+    buildTimeAssetPath: Assets/WorldAssets/Materials/VideoTexture.renderTexture
+  - fileID: 88
+    classID: 90
+    packedSize: 5592
+    offset: 22600168
+    sourceAssetGUID: 137a1794114cb694ba509d4c8544d839
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Lance/ship_lance_hires.fbx
+  - fileID: 89
+    classID: 90
+    packedSize: 2524
+    offset: 22605760
+    sourceAssetGUID: 29f422bff94060444a70f5a72fddbed1
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Thorn/ship_thorn_hires.fbx
+  - fileID: 90
+    classID: 90
+    packedSize: 9916
+    offset: 22608288
+    sourceAssetGUID: 6a19bdd91b72603458d32030816a5861
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Shockwave/model_shockwave_hires.fbx
+  - fileID: 91
+    classID: 90
+    packedSize: 6656
+    offset: 22618208
+    sourceAssetGUID: c19b67911ac3f444384c23c8692a3e9c
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Models/Model_Ships/Model_Wormhole/model_wormhole_hires.fbx
+  - fileID: 92
+    classID: 91
+    packedSize: 452
+    offset: 22624864
+    sourceAssetGUID: ded2afe8547eb554e8cc491810cd2377
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Animations/Anim_Ships/Anim_Lance/Anim_Cont_Lance_mainmenu.controller
+  - fileID: 93
+    classID: 91
+    packedSize: 596
+    offset: 22625320
+    sourceAssetGUID: 3149ec3c55557314eac259c5f688aeaf
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Animations/Anim_Ships/Anim_Shockwave/anim_shockwave_controller_mainmenu.controller
+  - fileID: 94
+    classID: 91
+    packedSize: 460
+    offset: 22625920
+    sourceAssetGUID: 05ef4632466b8e54d8b4c95483a49cff
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Animations/Anim_Ships/Anim_Thorn/anim_thorn_controller_main_menu.controller
+  - fileID: 95
+    classID: 91
+    packedSize: 432
+    offset: 22626384
+    sourceAssetGUID: ea67a3ce2202fda45bcbe0d11a6d009a
+    buildTimeAssetPath: Assets/WorldAssets/CollidalotVRC/Animations/Anim_Ships/Anim_Wormhole/anim_wormhole_controller_Main_Menu.controller
+  - fileID: 96
+    classID: 115
+    packedSize: 100
+    offset: 132176
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 97
+    classID: 115
+    packedSize: 92
+    offset: 132280
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 98
+    classID: 115
+    packedSize: 96
+    offset: 132376
+    sourceAssetGUID: 4ecd63eff847044b68db9453ce219299
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCCore-Editor.dll
+  - fileID: 99
+    classID: 115
+    packedSize: 116
+    offset: 132472
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 100
+    classID: 115
+    packedSize: 116
+    offset: 132592
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 101
+    classID: 115
+    packedSize: 100
+    offset: 132712
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 102
+    classID: 115
+    packedSize: 108
+    offset: 132816
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 103
+    classID: 115
+    packedSize: 108
+    offset: 132928
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 104
+    classID: 115
+    packedSize: 96
+    offset: 133040
+    sourceAssetGUID: 0cd44c1031e13a943bb63640046fad76
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/Layout/CanvasScaler.cs
+  - fileID: 105
+    classID: 115
+    packedSize: 88
+    offset: 133136
+    sourceAssetGUID: 45115577ef41a5b4ca741ed302693907
+    buildTimeAssetPath: Assets/Udon/UdonBehaviour.cs
+  - fileID: 106
+    classID: 115
+    packedSize: 88
+    offset: 133224
+    sourceAssetGUID: 4e29b1a8efbd4b44bb3f3716e73f07ff
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/Button.cs
+  - fileID: 107
+    classID: 115
+    packedSize: 128
+    offset: 133312
+    sourceAssetGUID: 4f231c4fb786f3946a6b90b886c48677
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/EventSystem/InputModules/StandaloneInputModule.cs
+  - fileID: 108
+    classID: 115
+    packedSize: 80
+    offset: 133440
+    sourceAssetGUID: 5f7201a12d95ffc409449d95f23cf332
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/Text.cs
+  - fileID: 109
+    classID: 115
+    packedSize: 88
+    offset: 133520
+    sourceAssetGUID: 67db9e8f0e2ae9c40bc1e2b64352a6b4
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/Slider.cs
+  - fileID: 110
+    classID: 115
+    packedSize: 104
+    offset: 133608
+    sourceAssetGUID: 76c392e42b5098c458856cdf6ecaaaa1
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/EventSystem/EventSystem.cs
+  - fileID: 111
+    classID: 115
+    packedSize: 128
+    offset: 133712
+    sourceAssetGUID: bf61d954ecb803046953c666facfb904
+    buildTimeAssetPath: Assets/Udon/ProgramSources/SerializedUdonProgramAsset.cs
+  - fileID: 112
+    classID: 115
+    packedSize: 104
+    offset: 133840
+    sourceAssetGUID: dc42784cf147c0c48a680349fa168899
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/GraphicRaycaster.cs
+  - fileID: 113
+    classID: 115
+    packedSize: 88
+    offset: 133944
+    sourceAssetGUID: fe87c0e1cc204ed48ad3b37840f39efc
+    buildTimeAssetPath: Packages/com.unity.ugui/Runtime/UI/Core/Image.cs
+  - fileID: 114
+    classID: 115
+    packedSize: 92
+    offset: 134032
+    sourceAssetGUID: 661092b4961be7145bfbe56e1e62337b
+    buildTimeAssetPath: Assets/VRCSDK/Plugins/VRCSDK3.dll
+  - fileID: 115
+    classID: 213
+    packedSize: 568
+    offset: 22626816
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 116
+    classID: 213
+    packedSize: 572
+    offset: 22627384
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 117
+    classID: 213
+    packedSize: 580
+    offset: 22627960
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 118
+    classID: 213
+    packedSize: 632
+    offset: 22628544
+    sourceAssetGUID: 0000000000000000f000000000000000
+    buildTimeAssetPath: Resources/unity_builtin_extra
+  - fileID: 119
+    classID: 1
+    packedSize: 111
+    offset: 22629176
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 120
+    classID: 222
+    packedSize: 13
+    offset: 22629288
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 121
+    classID: 224
+    packedSize: 108
+    offset: 22629304
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 122
+    classID: 114
+    packedSize: 32752
+    offset: 22629416
+    sourceAssetGUID: 7f54064f2b40b0448ba1fd0738b39e2b
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/28d990002c4b8de448ef01df079d54e3.asset
+  - fileID: 123
+    classID: 114
+    packedSize: 54932
+    offset: 22662168
+    sourceAssetGUID: d5033b98fab9c5d41a4f155f89f8417b
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/40ca1fd46e0ce0344b2f1d3a4827c9f9.asset
+  - fileID: 124
+    classID: 114
+    packedSize: 15372
+    offset: 22717104
+    sourceAssetGUID: f56a10926f031c2438930d0e3f22d123
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/4715e20276be3b141a6a216230cab4e9.asset
+  - fileID: 125
+    classID: 114
+    packedSize: 40752
+    offset: 22732480
+    sourceAssetGUID: c8209fb27982fa4428ae7a12361316ab
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/490bf938b26d9a34bbdb113b2cc12508.asset
+  - fileID: 126
+    classID: 114
+    packedSize: 478596
+    offset: 22773232
+    sourceAssetGUID: 80c22a9829944dd4da6309ce3ad8d953
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/596c91a6e92606d4fa5eb250ed3050a9.asset
+  - fileID: 127
+    classID: 114
+    packedSize: 22364
+    offset: 23251832
+    sourceAssetGUID: 0f65c9e8711b7d545841b0cdcc7b7a24
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/8d0c7df61e22417478b7932d3dfddbe0.asset
+  - fileID: 128
+    classID: 114
+    packedSize: 44396
+    offset: 23274200
+    sourceAssetGUID: 87956caff11055641ac48877fc9edd5a
+    buildTimeAssetPath: Assets/SerializedUdonPrograms/f29d74d63f9ccea46b175044043fd013.asset
+  - fileID: 129
+    classID: 114
+    packedSize: 36
+    offset: 23318600
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 130
+    classID: 114
+    packedSize: 120
+    offset: 23318640
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 131
+    classID: 114
+    packedSize: 404
+    offset: 23318760
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+  - fileID: 132
+    classID: 114
+    packedSize: 1928
+    offset: 23319168
+    sourceAssetGUID: 65c4e15dce1c535438d6d1ee872beb0a
+    buildTimeAssetPath: Assets/WorldAssets/Udon/Games/Connect4/ConnectFourSlotButton.prefab
+--- !u!1126 &-2218825811670926087
+PackedAssets:
+  m_File: 4
+  m_ShortPath: CAB-08b282196c4dd2bcf5076c1238a9899d
+  m_Overhead: 4096
+  m_Contents:
+  - fileID: 1
+    classID: 142
+    packedSize: 104
+    offset: 4096
+    sourceAssetGUID: 00000000000000000000000000000000
+    buildTimeAssetPath: AssetBundle Object
+  - fileID: 2
+    classID: 290
+    packedSize: 112
+    offset: 4200
+    sourceAssetGUID: 00000000000000000000000000000000
+    buildTimeAssetPath: 'Built-in AssetBundleManifest: AssetBundleManifest'
+--- !u!1125 &1
+BuildReport:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LastWindowsBuild
+  m_Summary:
+    buildStartTime:
+      serializedVersion: 2
+      ticks: 637873433357033542
+    buildGUID: 00000000000000000000000000000000
+    platformName: Win64
+    platformGroupName: Standalone
+    options: 16
+    assetBundleOptions: 32
+    outputPath: C:/Users/conno/AppData/Local/Temp/DefaultCompany/VRC Home World/scene-standalonewindows64-samplescene.vrcw
+    crc: 4294479094
+    totalSize: 9821822
+    totalTimeTicks: 133940251
+    totalErrors: 0
+    totalWarnings: 0
+    buildType: 1
+    buildResult: 1
+  m_Files:
+  - path: D:/Programming/VRC/Worlds/VRC Home World/scene-standalonewindows64-samplescene.vrcw/BuildPlayer-SampleScene
+    role: Scene
+    id: 0
+    totalSize: 834808
+  - path: D:/Programming/VRC/Worlds/VRC Home World/scene-standalonewindows64-samplescene.vrcw/BuildPlayer-SampleScene.sharedAssets
+    role: SharedAssets
+    id: 1
+    totalSize: 23321096
+  - path: D:/Programming/VRC/Worlds/VRC Home World/scene-standalonewindows64-samplescene.vrcw
+    role: AssetBundle
+    id: 2
+    totalSize: 9817200
+  - path: D:/Programming/VRC/Worlds/VRC Home World/scene-standalonewindows64-samplescene.vrcw.manifest
+    role: AssetBundleTextManifest
+    id: 3
+    totalSize: 3395
+  - path: D:/Programming/VRC/Worlds/VRC Home World/VRC Home World/CAB-08b282196c4dd2bcf5076c1238a9899d
+    role: ResourcesFile
+    id: 4
+    totalSize: 4312
+  - path: D:/Programming/VRC/Worlds/VRC Home World/VRC Home World
+    role: ManifestAssetBundle
+    id: 5
+    totalSize: 1057
+  - path: D:/Programming/VRC/Worlds/VRC Home World/VRC Home World.manifest
+    role: AssetBundleTextManifest
+    id: 6
+    totalSize: 170
+  m_BuildSteps:
+  - stepName: Build Asset Bundles
+    durationTicks: 133940251
+    depth: 0
+    messages: []
+  - stepName: Calculate asset bundles to be built
+    durationTicks: 44265
+    depth: 1
+    messages: []
+  - stepName: Compile scripts
+    durationTicks: 23851974
+    depth: 1
+    messages: []
+  - stepName: Build player
+    durationTicks: 62201305
+    depth: 1
+    messages: []
+  - stepName: Prepare assets for target platform
+    durationTicks: 2267561
+    depth: 2
+    messages: []
+  - stepName: Building scenes
+    durationTicks: 7374964
+    depth: 2
+    messages: []
+  - stepName: Building scene Assets/Scenes/SampleScene.unity
+    durationTicks: 7355648
+    depth: 3
+    messages: []
+  - stepName: Writing asset files
+    durationTicks: 6234965
+    depth: 2
+    messages: []
+  - stepName: Packaging assets - archive:/BuildPlayer-SampleScene/BuildPlayer-SampleScene.sharedAssets
+    durationTicks: 6199545
+    depth: 3
+    messages: []
+  - stepName: Creating compressed player package
+    durationTicks: 31532329
+    depth: 2
+    messages: []
+  - stepName: Postprocess built player
+    durationTicks: 1758536
+    depth: 2
+    messages: []
+  m_Appendices:
+  - {fileID: 4966510649743481695}
+  - {fileID: -3771831695939388752}
+  - {fileID: 7522482706260269301}
+  - {fileID: 3547580375721503996}
+  - {fileID: -2218825811670926087}
+--- !u!641289076 &3547580375721503996
+AudioBuildInfo:
+  m_IsAudioDisabled: 0
+  m_AudioClipCount: 0
+  m_AudioMixerCount: 0
+--- !u!668709126 &4966510649743481695
+BuiltAssetBundleInfoSet:
+  bundleInfos:
+  - bundleName: scene-standalonewindows64-samplescene.vrcw
+    bundleArchiveFile: 2
+    packagedFileIndices: 0000000001000000
+  - bundleName: VRC Home World
+    bundleArchiveFile: 5
+    packagedFileIndices: 04000000
+--- !u!382020655 &7522482706260269301
+PluginBuildInfo:
+  m_RuntimePlugins:
+  - OVRPlugin
+  - System.Threading.Tasks.Extensions
+  - VRC.Udon.ClientBindings
+  - openvr_api
+  - portmidi
+  - VRC.Udon.VRCWrapperModules
+  - VRC.Utility
+  - VRCSDK3
+  - VRC.Udon.VM
+  - nunit.framework
+  - librsync.net
+  - VRC.Udon.Common
+  - Collections.Pooled
+  - System.Collections.Immutable
+  - System.Numerics.Vectors
+  - System.Buffers
+  - VRC.Udon.Wrapper
+  - VRC.Udon.Security
+  - clipper_library
+  - VRCSDKBase
+  - System.Runtime.CompilerServices.Unsafe
+  - UnityAdsLoadListener
+  - libopenvr_api
+  - Blake2Sharp
+  - UnityAdsShowListener
+  - System.Memory
+  - UnityAdsInitializationListener
+  - VRCCore-Editor
+  - AudioPluginOculusSpatializer
+  m_EditorPlugins:
+  - Mono.Cecil
+  - Mono.Cecil.Rocks
+  - VRCSDK3-Editor
+  - Microsoft.CodeAnalysis
+  - VRC.Udon.VRCTypeResolverModules
+  - Mono.Cecil.Mdb
+  - AppleEventIntegration
+  - liblz4Plastic
+  - Unity.Analytics.Tracker
+  - Unity.Plastic.Newtonsoft.Json
+  - Mono.Cecil.Pdb
+  - unityplastic
+  - Unity.Analytics.Editor
+  - VRC.Udon.Compiler
+  - System.Reflection.Metadata
+  - Microsoft.CodeAnalysis.CSharp
+  - VRC.Udon.UAssembly
+  - VRC.Udon.Graph
+  - UnityEditor.VR
+  - 0Harmony
+  - VRCSDKBase-Editor
+  - VRC.Udon.VRCGraphModules
+  - log4netPlastic
+  - VRC.Udon.EditorBindings
+  - zlib64Plastic
+  - Unity.Plastic.Antlr3.Runtime
+  - lz4x64Plastic

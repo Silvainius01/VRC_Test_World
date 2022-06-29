@@ -1,0 +1,217 @@
+fileFormatVersion: 2
+guid: 9ca125d8895c5b9488f4ee5b88c47a0a
+timeCreated: 1502130628
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: back_engin_left
+    100002: back_engin_left 1
+    100004: back_engin_left_streach
+    100006: back_engin_right
+    100008: back_engin_right 1
+    100010: back_engin_right_streach
+    100012: base_bone
+    100014: cabin
+    100016: car_door_left
+    100018: car_door_right
+    100020: engin_cover_left
+    100022: engin_cover_right
+    100024: engin_top_back
+    100026: engin_top_back_2
+    100028: engin_top_front
+    100030: engin_top_front_2
+    100032: exsahst_1_left
+    100034: exsahst_1_right
+    100036: exsahst_2_left
+    100038: exsahst_2_right
+    100040: front_bumper
+    100042: front_engin_1
+    100044: front_engin_2
+    100046: handle
+    100048: hover_pad_center
+    100050: hover_pad_left
+    100052: hover_pad_right
+    100054: //RootNode
+    100056: pipe_exsahst_left
+    100058: pipe_exsahst_right
+    100060: shovel
+    100062: skeleton_underbelly
+    100064: tube_left_bottom
+    100066: tube_left_bottom2
+    100068: tube_left_bottom3
+    100070: tube_left_bottom4
+    100072: tube_left_bottom5
+    100074: tube_left_bottom6
+    100076: tube_left_top
+    100078: tube_left_top2
+    100080: tube_left_top3
+    100082: tube_left_top4
+    100084: tube_left_top5
+    100086: tube_left_top6
+    100088: tube_right_1
+    100090: tube_right_2
+    100092: tube_right_3
+    100094: tube_right_4
+    100096: tube_right_5
+    100098: under_cabin
+    100100: warp_streach_bone
+    400000: back_engin_left
+    400002: back_engin_left 1
+    400004: back_engin_left_streach
+    400006: back_engin_right
+    400008: back_engin_right 1
+    400010: back_engin_right_streach
+    400012: base_bone
+    400014: cabin
+    400016: car_door_left
+    400018: car_door_right
+    400020: engin_cover_left
+    400022: engin_cover_right
+    400024: engin_top_back
+    400026: engin_top_back_2
+    400028: engin_top_front
+    400030: engin_top_front_2
+    400032: exsahst_1_left
+    400034: exsahst_1_right
+    400036: exsahst_2_left
+    400038: exsahst_2_right
+    400040: front_bumper
+    400042: front_engin_1
+    400044: front_engin_2
+    400046: handle
+    400048: hover_pad_center
+    400050: hover_pad_left
+    400052: hover_pad_right
+    400054: //RootNode
+    400056: pipe_exsahst_left
+    400058: pipe_exsahst_right
+    400060: shovel
+    400062: skeleton_underbelly
+    400064: tube_left_bottom
+    400066: tube_left_bottom2
+    400068: tube_left_bottom3
+    400070: tube_left_bottom4
+    400072: tube_left_bottom5
+    400074: tube_left_bottom6
+    400076: tube_left_top
+    400078: tube_left_top2
+    400080: tube_left_top3
+    400082: tube_left_top4
+    400084: tube_left_top5
+    400086: tube_left_top6
+    400088: tube_right_1
+    400090: tube_right_2
+    400092: tube_right_3
+    400094: tube_right_4
+    400096: tube_right_5
+    400098: under_cabin
+    400100: warp_streach_bone
+    7400000: Shockwave Idle Main menu
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Shockwave Idle Main menu
+      takeName: Take 001
+      firstFrame: 10
+      lastFrame: 21
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: misc/models
+  assetBundleVariant: 

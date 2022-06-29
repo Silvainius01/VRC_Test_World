@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 519373b923bc7e74487decd307085914
+timeCreated: 1501032669
+licenseType: Free
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _distort_shape: {fileID: 2800000, guid: a9d81228b5216db48809f28a4fa740f2, type: 3}
+  - _norm: {fileID: 2800000, guid: c9ddd2876f4c3c14a987516a06bf0324, type: 3}
+  userData: 
+  assetBundleName: ships/general/shaders
+  assetBundleVariant: 

@@ -1,0 +1,209 @@
+fileFormatVersion: 2
+guid: c19b67911ac3f444384c23c8692a3e9c
+timeCreated: 1504245989
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: body
+    100002: cabin
+    100004: engine
+    100006: engine_joint
+    100008: engine_side_l
+    100010: engine_side_r
+    100012: ikHandle3
+    100014: ikHandle4
+    100016: intake
+    100018: intake1
+    100020: main
+    100022: //RootNode
+    100024: rear_exhaust_l
+    100026: rear_exhaust_r
+    100028: rear_exhaust_tip_l
+    100030: rear_exhaust_tip_r
+    100032: roller_front_bot_l
+    100034: roller_front_bot_r
+    100036: roller_front_spin_l
+    100038: roller_front_spin_r
+    100040: roller_front_top_l
+    100042: roller_front_top_r
+    100044: roller_rear2_l
+    100046: roller_rear2_r
+    100048: roller_rear3_l
+    100050: roller_rear3_r
+    100052: roller_rear_bot
+    100054: roller_rear_bot1
+    100056: roller_rear_l
+    100058: roller_rear_r
+    100060: roller_rear_rotate_l
+    100062: roller_rear_rotate_r
+    100064: roller_rear_swivel_l
+    100066: roller_rear_swivel_r
+    100068: thrust_exhaust_l
+    100070: thrust_exhaust_r
+    100072: thrust_rotate_l
+    100074: thrust_rotate_r
+    100076: thrust_stretch_l
+    100078: thrust_stretch_r
+    100080: thrust_tip_l
+    100082: thrust_tip_r
+    400000: body
+    400002: cabin
+    400004: engine
+    400006: engine_joint
+    400008: engine_side_l
+    400010: engine_side_r
+    400012: ikHandle3
+    400014: ikHandle4
+    400016: intake
+    400018: intake1
+    400020: main
+    400022: //RootNode
+    400024: rear_exhaust_l
+    400026: rear_exhaust_r
+    400028: rear_exhaust_tip_l
+    400030: rear_exhaust_tip_r
+    400032: roller_front_bot_l
+    400034: roller_front_bot_r
+    400036: roller_front_spin_l
+    400038: roller_front_spin_r
+    400040: roller_front_top_l
+    400042: roller_front_top_r
+    400044: roller_rear2_l
+    400046: roller_rear2_r
+    400048: roller_rear3_l
+    400050: roller_rear3_r
+    400052: roller_rear_bot
+    400054: roller_rear_bot1
+    400056: roller_rear_l
+    400058: roller_rear_r
+    400060: roller_rear_rotate_l
+    400062: roller_rear_rotate_r
+    400064: roller_rear_swivel_l
+    400066: roller_rear_swivel_r
+    400068: thrust_exhaust_l
+    400070: thrust_exhaust_r
+    400072: thrust_rotate_l
+    400074: thrust_rotate_r
+    400076: thrust_stretch_l
+    400078: thrust_stretch_r
+    400080: thrust_tip_l
+    400082: thrust_tip_r
+    4300000: engine
+    4300002: body
+    7400000: Wormhole Warping Anim
+    7400002: Womhole Idle Anim
+    9500000: //RootNode
+    13700000: body
+    13700002: engine
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: 4b73e0edde44b2440bcd88c1c44a486a, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Womhole Idle Anim
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 20
+    meshCompression: 3
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: ships/wormhole/models
+  assetBundleVariant: 

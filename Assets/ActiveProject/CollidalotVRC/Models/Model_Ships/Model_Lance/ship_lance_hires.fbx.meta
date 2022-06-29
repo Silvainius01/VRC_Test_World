@@ -1,0 +1,238 @@
+fileFormatVersion: 2
+guid: 137a1794114cb694ba509d4c8544d839
+timeCreated: 1508266544
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: body
+    100002: bunker_hinge_bot_l
+    100004: bunker_hinge_bot_r
+    100006: bunker_hinge_top_l
+    100008: bunker_hinge_top_r
+    100010: bunker_main_l
+    100012: bunker_main_r
+    100014: bunker_rail_l
+    100016: bunker_rail_r
+    100018: drill
+    100020: engine
+    100022: engine_main
+    100024: exhaust_front_l
+    100026: exhaust_front_r
+    100028: fuelinjection_l
+    100030: fuelinjection_r
+    100032: main
+    100034: pipes_top_l
+    100036: pipes_top_r
+    100038: rotor_case_l
+    100040: rotor_case_r
+    100042: rotor_in_l
+    100044: rotor_in_r
+    100046: rotor_out_l
+    100048: rotor_out_r
+    100050: //RootNode
+    100052: spear_back_l
+    100054: spear_back_r
+    100056: spear_front_l
+    100058: spear_front_r
+    100060: spoiler
+    100062: spoiler_frame
+    100064: thruster
+    100066: vent_l
+    100068: vent_r
+    400000: body
+    400002: bunker_hinge_bot_l
+    400004: bunker_hinge_bot_r
+    400006: bunker_hinge_top_l
+    400008: bunker_hinge_top_r
+    400010: bunker_main_l
+    400012: bunker_main_r
+    400014: bunker_rail_l
+    400016: bunker_rail_r
+    400018: drill
+    400020: engine
+    400022: engine_main
+    400024: exhaust_front_l
+    400026: exhaust_front_r
+    400028: fuelinjection_l
+    400030: fuelinjection_r
+    400032: main
+    400034: pipes_top_l
+    400036: pipes_top_r
+    400038: rotor_case_l
+    400040: rotor_case_r
+    400042: rotor_in_l
+    400044: rotor_in_r
+    400046: rotor_out_l
+    400048: rotor_out_r
+    400050: //RootNode
+    400052: spear_back_l
+    400054: spear_back_r
+    400056: spear_front_l
+    400058: spear_front_r
+    400060: spoiler
+    400062: spoiler_frame
+    400064: thruster
+    400066: vent_l
+    400068: vent_r
+    4300000: body
+    4300002: engine
+    7400000: Lance Idle
+    7400002: Lance Warp
+    9500000: //RootNode
+    13700000: body
+    13700002: engine
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Default
+    second: {fileID: 2100000, guid: 0c7e92d47b7a1054c8007a9a94e7c21b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Engine
+    second: {fileID: 2100000, guid: ada2f913da4d047429953dac9fbbda75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Engine1
+    second: {fileID: 2100000, guid: 5e296db4464fed24f9b69691642b6721, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: b06a7692276830847bbaf12c436c0c6f, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Lance Idle
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Lance Warp
+      takeName: Take 001
+      firstFrame: 66
+      lastFrame: 90
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 3
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: ships/lance/models
+  assetBundleVariant: 
