@@ -27,6 +27,7 @@ public class LobbyController : UdonSharpBehaviour
     [Header("External References")]
     public Canvas lobbyCanvas;
     public GameObject[] teamUiObjects;
+    public Text debugText;
 
     [Header("Synced Player Modifiables")]
     [Tooltip("If enabled, will attempt to make teams as even as possible. Otherwise, teams are random. Ignored if teams are formed manually.")]
@@ -91,6 +92,13 @@ public class LobbyController : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
+        debugText.text += "\nLobby received data: ";
+        var localPlayer = Networking.LocalPlayer;
+        if (!localPlayer.IsOwner(this.gameObject) && localPlayer.isMaster)
+        {
+            Networking.SetOwner(localPlayer, this.gameObject);
+            debugText.text += " master -> owner.";
+        }
         UpdateLobby();
     }
 
@@ -113,17 +121,25 @@ public class LobbyController : UdonSharpBehaviour
     private void OnPlayerLobbyInteractInternal(VRCPlayerApi player, int team)
     {
         int playerIndex = GetPlayerIdIndex(player.playerId);
-        if(playerIndex > 0)
+        debugText.text += $"\nLobby got event: p{player.playerId} i{playerIndex} ";
+
+        if(playerIndex >= 0)
         {
             if (team != playerTeams[playerIndex])
             {
                 playerTeams[playerIndex] = team;
+                debugText.text += "Swapped teams.";
                 UpdateLobby();
             }
-            else RemovePlayerFromLobbyInternal(player);
+            else
+            {
+                debugText.text += "Left lobby.";
+                RemovePlayerFromLobbyInternal(player);
+            }
         }
         else
         {
+            debugText.text += "Joined lobby.";
             AddPlayerToLobbyInternal(player, team);
         }
     }
@@ -226,14 +242,19 @@ public class LobbyController : UdonSharpBehaviour
         var localPlayer = Networking.LocalPlayer;
 
         if (!localPlayer.IsOwner(this.gameObject))
-            Networking.SetOwner(localPlayer, this.gameObject);
+            return; // Networking.SetOwner(localPlayer, this.gameObject);
 
         RequestSerialization();
     }
 
     private void UpdateLobby()
     {
-        SyncBehaviour();
+        debugText.text += "\nUpdating lobby:";
+        if (Networking.LocalPlayer.IsOwner(this.gameObject))
+        {
+            debugText.text += " Sync.";
+            SyncBehaviour();
+        }
 
         currentPlayers = 0;
 
@@ -244,7 +265,7 @@ public class LobbyController : UdonSharpBehaviour
             text.text = "Join";
 
         for (int i = 0; i < maxPlayers; ++i)
-            if (playerSlots[i] > 0)
+            if (playerSlots[i] > -1)
             {
                 ++currentPlayers;
                 allPlayers[i] = VRCPlayerApi.GetPlayerById(playerSlots[i]);
@@ -254,9 +275,10 @@ public class LobbyController : UdonSharpBehaviour
                 {
                     teamPlayerTexts[team].text += $"\n{allPlayers[i].displayName}";
                     if (playerSlots[i] == Networking.LocalPlayer.playerId)
-                        teamJoinTexts[i].text = "Leave";
+                        teamJoinTexts[team].text = "Leave";
                 }
             }
+        debugText.text += " Done.";
     }
 
     private UdonBehaviour GetBehaviour(GameObject obj)
