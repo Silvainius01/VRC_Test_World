@@ -1,158 +1,201 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.SDK3.Components;
 
 /*
- * TODO:
- *      When Udon/U# is more mature, a centrallized system will likely be possible. For now, this class is irrelevant.
+ *  The combat controller is meant to ONLY handle:
+ *      - Combat specific settings
+ *      - Managment of other combat controllers
  */
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class CombatController : UdonSharpBehaviour
 {
-    [Header("Player Colliders")]
+    [Header("Scenario Settings")]
+    [Tooltip("How long the game lasts (in seconds)")]
+    public float gameLength = 5 * 60;
+    [Tooltip("The parent objects for all team spawn locations. If the object has no children, the parent will be used instead.")]
+    public GameObject[] teamSpawns;
+
+    [Header("Combat Settings")]
+    [Tooltip("If enabled, players on the same team can damage each other.")]
+    public bool allowFriendlyFire;
+    [Tooltip("Damage modifier against friendly targets")]
+    public float friendlyFireDamageMult = 1.0f;
+
+    [Header("External References")]
     public Material playerAllyMaterial;
     public Material playerEnemyMaterial;
     public Material playerNeutralMaterial;
-
-    [Header("Player Combat Controller")]
+    public LobbyController gameLobby;
     public GameObject playerCombatPrefab;
+    public VRCObjectPool playerCombatPool;
+    public Text debugText;
+    public GameObject[] rangedWeaponObjects;
 
-    // Private Vars
+    // Externally set
+    [HideInInspector] public int[] playerSlots = null;
+    [HideInInspector] public int[] playerTeams = null;
+    [HideInInspector] public VRCPlayerApi[] allPlayers = null;
+
+    // Private vars
+    int numTeams;
+    int maxPlayers;
+    bool gameStarted;
+    VRCPlayerApi localPlayer;
     GameObject[] allControllers;
+    GameObject[][] allTeamSpawns;
 
-    void AddToStart()
-    {
-        allControllers = new GameObject[maxPlayers];
-
-        for (int i = 0; i < maxPlayers; ++i)
-        {
-            allControllers[i] = VRCInstantiate(playerCombatPrefab);
-
-            var playerBehaviour = GetBehaviour(allControllers[i]);
-            playerBehaviour.SetProgramVariable("combatController", this);
-        }
-    }
-
-    [Header("Lobby Settings")]
-    public int maxPlayers = 12;
-    public bool enableTeamLimits = false;
-    public int maxTeamSize = 6;
-
-    // Private vars 
-    int currentPlayers;
-    int[] playerSlots;
-    int[] playerTeams;
-    VRCPlayerApi[] allPlayers;
+    // Timers
+    float timerGameLength;
 
     // ========== MONO BEHAVIOUR ==========
 
-    protected void Start()
+    void Start()
     {
-        currentPlayers = 0;
-        playerSlots = new int[maxPlayers];
-        playerTeams = new int[maxPlayers];
-        allPlayers = new VRCPlayerApi[maxPlayers];
+        numTeams = gameLobby.numTeams;
+        localPlayer = Networking.LocalPlayer;
+        maxPlayers = gameLobby.maxPlayers;
+
+        allTeamSpawns = new GameObject[numTeams][];
         allControllers = new GameObject[maxPlayers];
 
-        for (int i = 0; i < maxPlayers; ++i)
+        foreach (var controller in playerCombatPool.Pool)
         {
-            playerSlots[i] = -1;
-            playerTeams[i] = -1;
-            allControllers[i] = VRCInstantiate(playerCombatPrefab);
-
-            var playerBehaviour = GetBehaviour(allControllers[i]);
+            var playerBehaviour = GetBehaviour(controller);
             playerBehaviour.SetProgramVariable("combatController", this);
+            playerBehaviour.SetProgramVariable("allowFriendlyFire", allowFriendlyFire);
+            playerBehaviour.SetProgramVariable("ffDamageMult", friendlyFireDamageMult);
+            playerBehaviour.SetProgramVariable("debugText", debugText);
+        }
+
+        for(int i = 0; i < numTeams; ++i)
+        {
+            int numSpawns = teamSpawns[i].transform.childCount;
+
+            // If there are no child spawns, use the parent.
+            if (numSpawns <= 0)
+                allTeamSpawns[i] = new GameObject[1] { teamSpawns[i] };
+            else // Fill the spawns with the children
+            {
+                allTeamSpawns[i] = new GameObject[numSpawns];
+                for (int j = 0; j < numSpawns; ++j)
+                    allTeamSpawns[i][j] = teamSpawns[i].transform.GetChild(j).gameObject;
+            }
+        }
+
+        foreach(var rangedControllerObject in rangedWeaponObjects)
+        {
+            var behaviour = rangedControllerObject.GetComponent<RangedWeaponCombatController>();
+
+            if (behaviour == null)
+            {
+                Debug.LogError($"{rangedControllerObject.name} is not a ranged weapon.");
+                continue;
+            }
+
+            behaviour.combatController = this;
         }
     }
 
-    // ========== U# BEHAVIOUR ==========
-
-    public override void OnPlayerJoined(VRCPlayerApi player) { }
-    public override void OnPlayerLeft(VRCPlayerApi player)
+    private void Update()
     {
-        //RemovePlayerFromLobby(player);
+        if (gameStarted && timerGameLength > 0.0f)
+        {
+            timerGameLength -= Time.deltaTime;
+
+            // End the game
+            if(timerGameLength <= 0.0f)
+            {
+                EndGame();
+            }
+        }
     }
 
     // ========== PUBLIC ==========
-    // These vars are so we can set arguments before calling the event
-    [HideInInspector] public int _team;
-    [HideInInspector] public VRCPlayerApi _player;
 
-    public void AddPlayerToLobby() => AddPlayerToLobbyInternal(_player, _team);
-    private void AddPlayerToLobbyInternal(VRCPlayerApi player, int team)
+    [HideInInspector] public int _localIndex;
+    [HideInInspector] public int _playerId;
+    // [HideInInspector] public UdonBehaviour _playerControllerRetval;
+
+    public void StartGame()
     {
-        if (currentPlayers >= maxPlayers)
-        {
-            Debug.LogWarning("Cannot add player: lobby full");
-            return;
-        }
-        if (IsTeamFull(team))
-        {
-            Debug.LogWarning($"Cannot add player: team {_team} full");
-            return;
-        }
+        debugText.text += "\nCombat controller started.";
+
+        if (playerSlots == null)
+            debugText.text += "\nplayerSlots[] null!";
+        if (playerTeams == null)
+            debugText.text += "\nplayerTeams[] null!";
+        if (allPlayers == null)
+            debugText.text += "\allPlayers[] null!";
+
+        debugText.text += $"\ns: {playerSlots.Length} t: {playerTeams.Length} p: {allPlayers.Length}";
 
         for (int i = 0; i < maxPlayers; ++i)
-            if (playerSlots[i] < 0)
+        {
+            debugText.text += $"\nP{i} ";
+            if (playerSlots[i] >= 0)
             {
-                ++currentPlayers;
-                playerSlots[i] = _player.playerId;
-                playerTeams[i] = _team;
-                allPlayers[i] = _player;
-                Debug.Log($"Added player to slot {i}");
-            }
-    }
+                int playerTeam = playerTeams[i];
+                GameObject controller = playerCombatPool.Pool[i];
 
-    public void RemovePlayerFromLobby() => RemovePlayerFromLobbyInternal(_player);
-    private void RemovePlayerFromLobbyInternal(VRCPlayerApi player)
-    {
-        if (currentPlayers <= 0)
-        {
-            Debug.LogWarning("Cannot remove player: lobby empty");
-            return;
+                controller.SetActive(true);
+                allControllers[i] = controller;
+
+                var playerCombatCont = GetBehaviour(controller);
+                playerCombatCont.enabled = allPlayers[i].isLocal; // Only enable the local controller.
+                playerCombatCont.SetProgramVariable("localTeam", playerTeams[_localIndex]);
+                playerCombatCont.SetProgramVariable("playerTeam", playerTeams[i]);
+                playerCombatCont.SetProgramVariable("linkedPlayer", allPlayers[i]);
+                playerCombatCont.SendCustomEvent("InitController");
+
+                if(localPlayer.playerId == playerSlots[i])
+                    foreach(var weaponObject in rangedWeaponObjects)
+                    {
+                        var weaponBehavior = GetBehaviour(weaponObject);
+                        weaponBehavior.SetProgramVariable("localPlayerController", playerCombatCont);
+                    }
+            }
         }
 
-        for (int i = 0; i < maxPlayers; ++i)
-            if (playerSlots[i] == _player.playerId)
-            {
-                --currentPlayers;
-                playerSlots[i] = -1;
-                playerTeams[i] = -1;
-                allPlayers[i] = null;
-                Debug.Log($"Removed player from slot {i}");
-            }
+
+        gameStarted = true;
+        timerGameLength = gameLength;
     }
 
-    public void GetPlayerTeam() => _team = GetPlayerTeamInternal(_player);
-    private int GetPlayerTeamInternal(VRCPlayerApi player)
+    public void EndGame()
     {
         for (int i = 0; i < maxPlayers; ++i)
-            if (playerSlots[i] == player.playerId)
-                return playerTeams[i];
-        return -1;
+        {
+            allControllers[i].SetActive(false);
+            if (playerSlots[i] >= 0)
+            {
+                allPlayers[i].Respawn();
+            }
+        }
+
+        allPlayers = null;
+        playerSlots = null;
+        playerTeams = null;
+        gameStarted = false;
+        timerGameLength = 0.0f;
     }
+
+    //public void GetPlayerCombatController()
+    //{
+    //    for(int i = 0; i < maxPlayers; ++i)
+    //    {
+    //        if(playerSlots[i] == _playerId)
+    //        {
+    //            _playerControllerRetval = GetBehaviour(allControllers[i]);
+    //        }
+    //    }
+    //}
 
     // ========== PRIVATE ==========
-
-    private void UpdateLobby()
-    {
-
-    }
-
-    // Will always return false for teamId < 0
-    private bool IsTeamFull(int team)
-    {
-        if (enableTeamLimits && team >= 0)
-        {
-            int count = 0;
-            foreach (int teamId in playerTeams)
-                if (teamId == team)
-                    ++count;
-            return count > maxTeamSize;
-        }
-        return false;
-    }
 
     UdonBehaviour GetBehaviour(GameObject obj)
     {

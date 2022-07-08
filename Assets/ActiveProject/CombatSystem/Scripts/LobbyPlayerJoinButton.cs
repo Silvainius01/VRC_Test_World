@@ -9,10 +9,15 @@ using VRC.Udon.Common.Interfaces;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class LobbyPlayerJoinButton : UdonSharpBehaviour
 {
-    public int team;
-    public LobbyController lobby;
-    public Text debugText;
+    // Externally Set
+    [HideInInspector] public int team;
+    [HideInInspector] public LobbyController lobby;
+    [HideInInspector] public Text debugText;
 
+    // Hidden
+    [HideInInspector] public string scriptType = "LobbyPlayerJoinButton";
+
+    // Private vars
     VRCPlayerApi localPlayer;
     [UdonSynced] int localPlayerId;
 

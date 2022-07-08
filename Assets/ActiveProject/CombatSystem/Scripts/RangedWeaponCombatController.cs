@@ -3,7 +3,9 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class RangedWeaponCombatController : UdonSharpBehaviour
 {
     public string weaponName = "default_weapon";
@@ -22,7 +24,7 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     [Tooltip("If enabled, the fired projectile will be destroyed when it contacts another collider.")]
     public bool destroyOnEnter;
     [Tooltip("How long the projectile is allowed to exist after being spawned")]
-    public float bulletLifespan = 10.0f;
+    public float projectileLifespan = 10.0f;
     [Tooltip("The speed of the projectile after being spawned")]
     public float muzzleVelocity;
     [Tooltip("Location at which the projectile is spawned")]
@@ -52,8 +54,15 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
 
     [Header("External References")]
     [Tooltip("If a bullet prefab for this weapon isnt defined, one will be made on Start() for this weapon.\n\nPlease note, that EACH INSTANCE of the weapon creates its own prefab. It is HIGHLY ENCOURAGED you create and link a copy of the bullet prefab.")]
+    public VRC_Pickup pickupComponent;
     public GameObject defaultBulletPrefab;
     public Collider[] nonTriggerChildColliders;
+
+    // Externally set
+    [HideInInspector] public CombatController combatController;
+    [HideInInspector] public PlayerCombatController localPlayerController;
+
+    // Hidden public
 
     // Private vars
     [Header("Debug Values")]
@@ -61,14 +70,16 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     bool isFiring = false;
     bool triggerDown = false;
     float currentBloom = 0.0f;
-    VRC_Pickup pickupComponent;
-    UdonBehaviour bulletBehaviour;
+    VRCPlayerApi localPlayer;
+    ProjectileCombatController bulletBehaviour;
 
     // Timers
     float timerRefire = 0.0f;
     float timerRechamber = 0.0f;
     float timerReload = 0.0f;
     float timerBloom = 0.0f;
+
+    // ========== MONO BEHAVIOUR ==========
 
     private void Start()
     {
@@ -78,13 +89,17 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
             bulletPrefab.SetActive(false);
         }
 
-        pickupComponent = (VRC_Pickup)GetComponent(typeof(VRC_Pickup));
+        localPlayer = Networking.LocalPlayer;
 
-        bulletBehaviour = GetBehaviour(bulletPrefab);
-        bulletBehaviour.SetProgramVariable("projectileDamage", projectileDamage);
-        bulletBehaviour.SetProgramVariable("projectileName", $"{weaponName}_round");
-        bulletBehaviour.SetProgramVariable("projectileLifetime", bulletLifespan);
-        bulletBehaviour.SetProgramVariable("destroyOnEnter", destroyOnEnter);
+        if(pickupComponent == null)
+            pickupComponent = (VRC_Pickup)GetComponent(typeof(VRC_Pickup));
+
+        bulletBehaviour = bulletPrefab.GetComponent<ProjectileCombatController>();
+        //bulletBehaviour.projectileDamage = projectileDamage;
+        //bulletBehaviour.projectileName = $"{weaponName}_round";
+        //bulletBehaviour.projectileLifetime = projectileLifespan;
+        //bulletBehaviour.destroyOnEnter = destroyOnEnter;
+        bulletBehaviour.linkedWeapon = this;
 
         // Pump/Lever/Bolt/etc action weapons should not fire automatically.
         if (rechamberEachShot)
@@ -98,6 +113,9 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
             Debug.LogWarning("Reload time not specified!");
             reloadTime = 0.001f;
         }
+
+        //if (combatController == null)
+        //    Debug.LogError($"{gameObject.name} does not have combat controller set! Please add it to the combat controller.");
     }
 
     private void Update()
@@ -106,20 +124,25 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
         triggerDown = Input.GetKey(KeyCode.Space);
 #endif
 
-        if (triggerDown)
-            Debug.Log("Trigger Down");
-
-        if (CanFireWeapon() && triggerDown)
+        if (pickupComponent.IsHeld && pickupComponent.currentPlayer.isLocal)
         {
-            FireWeapon();
+            if (CanFireWeapon() && triggerDown)
+            {
+                FireWeapon();
+            }
+
+            if (roundsLeft <= 0 || Input.GetKeyDown(KeyCode.R))
+                ReloadWeapon();
         }
 
-        isFiring &= triggerDown; // isFiring is set to false as soon as the trigger is released.
+        // isFiring is set to false as soon as:
+        //   - the trigger is released
+        //   - the weapon is reloading
+        isFiring &= triggerDown || roundsLeft <= 0;
         UpdateBloom();
-
-        if (roundsLeft <= 0 || Input.GetKeyDown(KeyCode.R))
-            ReloadWeapon();
     }
+
+    // ========== U# BEHAVIOUR ==========
 
     public override void OnPickupUseDown()
     {
@@ -129,18 +152,70 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     {
         triggerDown = false;
     }
+
     public override void OnPickup()
     {
-        bulletBehaviour.SetProgramVariable("owner", pickupComponent.currentPlayer);
+        bulletBehaviour.owner = pickupComponent.currentPlayer;
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = true;
     }
     public override void OnDrop()
     {
-        bulletBehaviour.SetProgramVariable("owner", null);
+        bulletBehaviour.owner = null;
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = false;
+        ReloadWeapon();
     }
+
+    public override void OnPlayerJoined(VRCPlayerApi player)
+    {
+        //int spreadLength = (spreadPattern == null) ? -1 : spreadPattern.Length;
+        //Debug.Log($"Weapon {weaponName} for player {player.displayName}[{player.playerId}]:" +
+        //    $"\nOwner: {player.isInstanceOwner} Spread: {spreadLength} Index: {spreadIndex}");
+    }
+
+    // ========== PUBLIC ==========
+
+    [HideInInspector][UdonSynced] public int _hitPlayerId;
+
+    public void DamagePlayerLocal()
+    {
+        Debug.Log("Damage - Local phase");
+        if (Networking.GetOwner(gameObject).playerId != localPlayer.playerId)
+        {
+            Debug.Log($"{weaponName} cannot damage player, not owned by local player.");
+            return;
+        }
+
+        RequestSerialization();
+        this.SendCustomNetworkEvent(NetworkEventTarget.All, "DamagePlayerGlobal");
+    }
+
+    public void DamagePlayerGlobal()
+    {
+        Debug.Log("Damage - Global phase");
+        VRCPlayerApi hitPlayer = VRCPlayerApi.GetPlayerById(_hitPlayerId);
+        if (hitPlayer.isLocal)
+        {
+            localPlayerController._damage = projectileDamage;
+            localPlayerController.DamagePlayer();
+        }
+    }
+
+    public void SpawnBulletGlobal()
+    {
+        Vector3 angles = Random.insideUnitCircle * currentBloom;
+        var adjustedDirection = Quaternion.Euler(angles) * bulletSpawn.rotation;
+        var bullet = VRCInstantiate(bulletPrefab);
+
+        bullet.SetActive(true);
+        bullet.transform.position = bulletSpawn.position;
+        bullet.transform.rotation = adjustedDirection;
+        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * muzzleVelocity;
+        Debug.Log("Bullet Spawned");
+    }
+
+    // ========== PRIVATE ==========
 
     void ReloadWeapon()
     {
@@ -195,30 +270,30 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
 
     void FireWeapon()
     {
-        Debug.Log("Firing");
-
         isFiring = true;
 
-        Vector3 angles = Random.insideUnitCircle * currentBloom;
-        var adjustedDirection = Quaternion.Euler(angles) * bulletSpawn.rotation;
-        var bullet = VRCInstantiate(bulletPrefab);
+        Debug.Log("Firing");
+        SendCustomNetworkEvent(NetworkEventTarget.All, "SpawnBulletGlobal");
 
-        bullet.SetActive(true);
-        bullet.transform.position = bulletSpawn.position;
-        bullet.transform.rotation = adjustedDirection;
-        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * muzzleVelocity;
-
-        --roundsLeft;
-        currentBloom = Mathf.Min(currentBloom + bloomPerShot, maxConeOfFireBloom);
-        timerRefire += 60.0f / roundsPerMin; // Refire is += to ensure that we get as close as possible to the exact fire rate.
-        timerRechamber = rechamberEachShot ? rechamberTime : 0.0f;
-        timerBloom = bloomDecayDelay; // Reset the bloom delay when the weapon fires
+        // Only update these stats on the user's end. 
+        // NOTE: Only updating bloom here means other people only see bullets go
+        // in the direction the weapon is aiming, and wont see the bloom on your end.
+        if (pickupComponent.IsHeld && pickupComponent.currentPlayer.isLocal)
+        {
+            --roundsLeft;
+            currentBloom = Mathf.Min(currentBloom + bloomPerShot, maxConeOfFireBloom);
+            timerBloom = bloomDecayDelay; // Reset the bloom delay when the weapon fires
+            timerRefire += 60.0f / roundsPerMin; // Refire is += to ensure that we get as close as possible to the exact fire rate.
+            timerRechamber = rechamberEachShot ? rechamberTime : 0.0f;
+            Debug.Log("vars updated");
+        }
+        else Debug.Log("vars skipped");
     }
 
     void UpdateBloom()
     {
-        // Dont update bloom when trigger is held
-        if (triggerDown)
+        // Dont update bloom if the weapon is firing
+        if (isFiring)
             return;
 
         // Only update bloom after the delay completes

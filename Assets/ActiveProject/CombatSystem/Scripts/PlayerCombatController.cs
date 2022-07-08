@@ -5,11 +5,12 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class PlayerCombatController : UdonSharpBehaviour
 {
     [Header("Health Settings")]
     public float maxHealth;
-    public float currentHealth;
+    [UdonSynced] public float currentHealth;
     public Slider healthSlider;
 
     [Header("Colliders")]
@@ -18,62 +19,73 @@ public class PlayerCombatController : UdonSharpBehaviour
 
     [Header("External References")]
     public GameObject canvasParent;
-    public CombatController combatController;
+    public Text debugText;
 
     // Externally Set
+    [HideInInspector] public int localTeam = -1;
     [HideInInspector] public int playerTeam = -1;
     [HideInInspector] public bool allowFriendlyFire;
+    [HideInInspector] public float ffDamageMult;
+    [HideInInspector] public VRCPlayerApi linkedPlayer;
+    [HideInInspector] public CombatController combatController;
+
+    // Hidden
+    [HideInInspector] public string scriptType = "PlayerCombatController";
 
     // Private
-    VRCPlayerApi linkedPlayer;
+    bool inited = false;
+    VRCPlayerApi localPlayer;
     Collider[] bodyColliders;
     MeshRenderer[] bodyColliderMeshs;
+    LobbyController lobby;
 
-    public void Start()
+    private void Start()
     {
-        linkedPlayer = Networking.LocalPlayer;
-
-        bodyColliders = bodyColliderParent.GetComponentsInChildren<Collider>();
-        bodyColliderMeshs = bodyColliderParent.GetComponentsInChildren<MeshRenderer>();
-
-        // Ensure we dont have any collision. Bad things happen otherwise.
-        foreach (var collider in bodyColliders)
-            collider.isTrigger = true;
-
-        // Dont want to see our own colliders
-        if (linkedPlayer.isLocal)
+        if (!inited)
         {
-            foreach (var renderer in bodyColliderMeshs)
-                renderer.enabled = false;
-        }
-        else
-        {
-            canvasParent.SetActive(false);
+            lobby = combatController.gameLobby;
+            localPlayer = Networking.LocalPlayer;
+
+            bodyColliders = bodyColliderParent.GetComponentsInChildren<Collider>();
+            bodyColliderMeshs = bodyColliderParent.GetComponentsInChildren<MeshRenderer>();
+
+            // Ensure we dont have any collision. Bad things happen otherwise.
+            foreach (var collider in bodyColliders)
+                collider.isTrigger = true;
+
+            // Disable the controller until we need it.
+            debugText.text += $"\ninit {gameObject.name}";
+            inited = true;
         }
     }
 
-    public void Update()
+    private void Update()
     {
-        if (linkedPlayer.isLocal)
+        if (linkedPlayer != null)
         {
             // Update the body colliders to be under the player
-            var originTrackingData = linkedPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Origin);
-            bodyColliderParent.transform.position = originTrackingData.position + new Vector3(0, 1, 0);
-
-            // Update the HUD to track player head
-            var headTrackingData = linkedPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head);
-            canvasParent.transform.position = headTrackingData.position;
-            canvasParent.transform.rotation = headTrackingData.rotation;
+            //if (linkedPlayer.IsUserInVR())
+            //{
+            //    var originTrackingData = linkedPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Origin);
+            //    bodyColliderParent.transform.position = originTrackingData.position;
+            //}
+            //else 
+            
+            if(linkedPlayer.isLocal)
+            {
+                bodyColliderParent.transform.position = linkedPlayer.GetPosition();
+                // Update the HUD to track player head
+                var headTrackingData = linkedPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head);
+                canvasParent.transform.position = headTrackingData.position;
+                canvasParent.transform.rotation = headTrackingData.rotation;
+            }
         }
     }
 
-    public void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter(Collider collider)
     {
-        // Ignore collisions on other players
-        if (!linkedPlayer.isLocal)
-            return;
-
         Debug.Log($"AH! {collider.gameObject.name}");
+        return;
 
         var behaviour = GetBehaviour(collider.gameObject);
         if (behaviour == null || behaviour.GetProgramVariable("isProjectileCombatController") == null)
@@ -81,16 +93,23 @@ public class PlayerCombatController : UdonSharpBehaviour
 
         VRCPlayerApi owner = (VRCPlayerApi)behaviour.GetProgramVariable("owner");
 
-        combatController._player = owner;
-        combatController.GetPlayerTeam();
-        int ownerTeam = combatController._team;
+        lobby._player = owner;
+        lobby.GetPlayerTeam();
+        int ownerTeam = lobby._team;
 
         // Damage player if friendly fire is on, or if the bullet is from an enemy
         if (allowFriendlyFire || ownerTeam != playerTeam)
         {
             float damage = (float)behaviour.GetProgramVariable("projectileDamage");
-            currentHealth -= damage;
-            UpdateHealthSlider();
+            damage *= (ownerTeam == playerTeam) ? ffDamageMult : 1.0f;
+
+            if (damage > 0.0f && !linkedPlayer.isLocal)
+            {
+
+            }
+
+            //currentHealth -= damage;
+            //UpdateHealthSlider();
         }
 
         if (currentHealth < 0.0f)
@@ -99,6 +118,66 @@ public class PlayerCombatController : UdonSharpBehaviour
             currentHealth = maxHealth;
         }
     }
+
+    // ========== PUBLIC ==========
+
+    public void InitController()
+    {
+        if (linkedPlayer == null)
+        {
+            debugText.text += "Tried linking null player!";
+            return;
+        }
+        else if (!inited)
+            Start();
+
+        debugText.text += $"{linkedPlayer.displayName}[{linkedPlayer.playerId}]: T:{playerTeam} L:{localTeam}";
+
+        Material teamMat = localTeam == playerTeam
+            ? combatController.playerAllyMaterial
+            : combatController.playerEnemyMaterial;
+        foreach (var renderer in bodyColliderMeshs)
+            renderer.material = teamMat;
+
+        // Dont want to see our own colliders
+        if (linkedPlayer.isLocal)
+        {
+            currentHealth = maxHealth;
+            canvasParent.SetActive(true);
+            foreach (var renderer in bodyColliderMeshs)
+                renderer.enabled = false;
+            debugText.text += " off";
+        }
+        else
+        {
+            foreach (var renderer in bodyColliderMeshs)
+                renderer.enabled = true;
+            canvasParent.SetActive(false);
+            debugText.text += " on";
+        }
+
+        this.enabled = true;
+
+        if (linkedPlayer.isLocal)
+        {
+            Networking.SetOwner(linkedPlayer, this.gameObject);
+            RequestSerialization();
+        }
+    }
+
+    [HideInInspector] public float _damage;
+
+    public void DamagePlayer()
+    {
+        Debug.Log("Damage - player phase");
+        if (linkedPlayer.isLocal)
+        {
+            debugText.text += $"\n{linkedPlayer.displayName}[{linkedPlayer.playerId}] {currentHealth}->{currentHealth - _damage}";
+            currentHealth -= _damage;
+        }
+    }
+
+    // ========== PRIVATE ==========
 
     void UpdateHealthSlider()
     {

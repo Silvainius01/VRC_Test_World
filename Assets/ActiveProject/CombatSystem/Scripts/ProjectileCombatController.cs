@@ -3,18 +3,43 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class ProjectileCombatController : UdonSharpBehaviour
 {
-    public string projectileName = "default_bullet";
-    public float projectileDamage = 1.0f;
-    public float projectileLifetime = 30.0f;
-    public bool destroyOnEnter = true;
+    // Externally set
     public VRCPlayerApi owner;
+    public RangedWeaponCombatController linkedWeapon;
 
-    // Its weird, but this is used to confirm that we got this behaviour via GetProgramVariable()
-    [HideInInspector]
-    public bool isProjectileCombatController = true;
+    string projectileName;
+    float projectileDamage;
+    float projectileLifetime;
+    bool destroyOnEnter;
+
+    // ========== MONO BEHAVIOUR ==========
+
+    private void OnEnable()
+    {
+        if (linkedWeapon == null)
+        {
+            Debug.LogError($"{projectileName} has no linked weapon!");
+        }
+
+        projectileName = linkedWeapon.weaponName + "_round";
+        projectileDamage = linkedWeapon.projectileDamage;
+        projectileLifetime = linkedWeapon.projectileLifespan;
+        destroyOnEnter = linkedWeapon.destroyOnEnter;
+        owner = linkedWeapon.pickupComponent.currentPlayer;
+
+        if (owner != null && !owner.isLocal)
+        {
+            Debug.Log($"bullet owner invalid: {(owner == null ? "null" : $"{owner.displayName}[{owner.playerId}]")}");
+            projectileDamage = 0.0f;
+        }
+
+        Debug.Log("bullet enabled");
+    }
 
     private void Update()
     {
@@ -23,11 +48,40 @@ public class ProjectileCombatController : UdonSharpBehaviour
         else Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider collider)
     {
-        Debug.Log($"Bullet Hit: {other.name}");
-        if (destroyOnEnter)
-            Destroy(gameObject);
-        else GetComponent<Rigidbody>().isKinematic = true;
+        Debug.Log($"bullet hit {collider.gameObject.name}");
+
+        //var behaviour = GetBehaviour(collider.gameObject);
+        //string scriptType = (string)behaviour.GetProgramVariable("scriptType");
+        //if (behaviour == null || scriptType == "PlayerCombatController")
+        //    return;
+
+        // Dont bother sending nerf events
+        var playerController = collider.gameObject.GetComponentInParent<PlayerCombatController>();
+
+        if (playerController == null || projectileDamage <= 0.0f)
+        {
+            Debug.Log($"did not hit damageable target: p={playerController != null} d={projectileDamage > 0.0f}");
+            return;
+        }
+
+        if (playerController.linkedPlayer == null)
+        {
+            Debug.LogError($"{projectileName} hit null linked collider");
+            return;
+        }
+
+        if (linkedWeapon == null)
+            Debug.LogError("How null");
+        Debug.Log("Attempting to damage player");
+        linkedWeapon._hitPlayerId = playerController.linkedPlayer.playerId;
+        linkedWeapon.DamagePlayerLocal();
+        Debug.Log("Bullet damaged player");
+    }
+
+    UdonBehaviour GetBehaviour(GameObject obj)
+    {
+        return (UdonBehaviour)obj.GetComponent(typeof(UdonBehaviour));
     }
 }
