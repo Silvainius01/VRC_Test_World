@@ -25,6 +25,7 @@ public class CombatController : UdonSharpBehaviour
     public bool allowFriendlyFire;
     [Tooltip("Damage modifier against friendly targets")]
     public float friendlyFireDamageMult = 1.0f;
+    public float respawnTime = 3.0f;
 
     [Header("External References")]
     public Material playerAllyMaterial;
@@ -41,13 +42,15 @@ public class CombatController : UdonSharpBehaviour
     [HideInInspector] public int[] playerTeams = null;
     [HideInInspector] public VRCPlayerApi[] allPlayers = null;
 
+    // Hidden
+    [HideInInspector] public GameObject[][] allTeamSpawns;
+
     // Private vars
     int numTeams;
     int maxPlayers;
     bool gameStarted;
     VRCPlayerApi localPlayer;
     GameObject[] allControllers;
-    GameObject[][] allTeamSpawns;
 
     // Timers
     float timerGameLength;
@@ -111,6 +114,7 @@ public class CombatController : UdonSharpBehaviour
             if(timerGameLength <= 0.0f)
             {
                 EndGame();
+                gameLobby.ResetGameLobby();
             }
         }
     }

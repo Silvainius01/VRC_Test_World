@@ -34,6 +34,7 @@ public class PlayerCombatController : UdonSharpBehaviour
 
     // Private
     bool inited = false;
+    float respawnTime;
     VRCPlayerApi localPlayer;
     Collider[] bodyColliders;
     MeshRenderer[] bodyColliderMeshs;
@@ -45,6 +46,7 @@ public class PlayerCombatController : UdonSharpBehaviour
         {
             lobby = combatController.gameLobby;
             localPlayer = Networking.LocalPlayer;
+            respawnTime = combatController.respawnTime;
 
             bodyColliders = bodyColliderParent.GetComponentsInChildren<Collider>();
             bodyColliderMeshs = bodyColliderParent.GetComponentsInChildren<MeshRenderer>();
@@ -131,7 +133,10 @@ public class PlayerCombatController : UdonSharpBehaviour
         else if (!inited)
             Start();
 
-        debugText.text += $"{linkedPlayer.displayName}[{linkedPlayer.playerId}]: T:{playerTeam} L:{localTeam}";
+        string linkedPlayerString = $"{linkedPlayer.displayName}[{linkedPlayer.playerId}]";
+        string localPlayerString = $"{localPlayer.displayName}[{localPlayer.playerId}]";
+
+        debugText.text += $" {linkedPlayerString}: T:{playerTeam} L:{localTeam}";
 
         Material teamMat = localTeam == playerTeam
             ? combatController.playerAllyMaterial
@@ -147,6 +152,7 @@ public class PlayerCombatController : UdonSharpBehaviour
             foreach (var renderer in bodyColliderMeshs)
                 renderer.enabled = false;
             debugText.text += " off";
+            UpdateHealthSlider();
         }
         else
         {
@@ -158,9 +164,16 @@ public class PlayerCombatController : UdonSharpBehaviour
 
         this.enabled = true;
 
-        if (linkedPlayer.isLocal)
+        if (!linkedPlayer.isLocal)
         {
+            Debug.Log($"Giving ownership to {linkedPlayerString} from {localPlayerString}");
             Networking.SetOwner(linkedPlayer, this.gameObject);
+
+            // Set all children to be owned by this player.
+            int numChildren = this.gameObject.transform.childCount;
+            for (int i = 0; i < numChildren; ++i)
+                Networking.SetOwner(linkedPlayer, this.gameObject.transform.GetChild(i).gameObject);
+
             RequestSerialization();
         }
     }
@@ -174,6 +187,13 @@ public class PlayerCombatController : UdonSharpBehaviour
         {
             debugText.text += $"\n{linkedPlayer.displayName}[{linkedPlayer.playerId}] {currentHealth}->{currentHealth - _damage}";
             currentHealth -= _damage;
+
+            UpdateHealthSlider();
+            if (currentHealth < 0)
+            {
+                localPlayer.EnablePickups(false);
+                SendCustomEventDelayedSeconds("RespawnPlayer", respawnTime);
+            }
         }
     }
 
@@ -182,6 +202,24 @@ public class PlayerCombatController : UdonSharpBehaviour
     void UpdateHealthSlider()
     {
         healthSlider.value = currentHealth / maxHealth;
+    }
+
+    void RespawnPlayer()
+    {
+        // tp to a random spawn
+        var t = GetRandomTeamSpawn();
+        localPlayer.TeleportTo(t.position, t.rotation);
+        
+        // Reset hp
+        currentHealth = maxHealth;
+        UpdateHealthSlider();
+    }
+
+    Transform GetRandomTeamSpawn()
+    {
+        var teamSpawns = combatController.allTeamSpawns[playerTeam];
+        int rIndex = Random.Range(0, teamSpawns.Length);
+        return teamSpawns[rIndex].transform;
     }
 
     UdonBehaviour GetBehaviour(GameObject obj)

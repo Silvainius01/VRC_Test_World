@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.SDK3.Components;
 using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
 
@@ -9,13 +10,12 @@ using VRC.Udon.Common.Interfaces;
 public class ProjectileCombatController : UdonSharpBehaviour
 {
     // Externally set
+    public string projectileName;
+    public float projectileDamage;
+    public float projectileLifetime;
+    public bool destroyOnEnter;
     public VRCPlayerApi owner;
     public RangedWeaponCombatController linkedWeapon;
-
-    string projectileName;
-    float projectileDamage;
-    float projectileLifetime;
-    bool destroyOnEnter;
 
     // ========== MONO BEHAVIOUR ==========
 
@@ -45,7 +45,7 @@ public class ProjectileCombatController : UdonSharpBehaviour
     {
         if (projectileLifetime > 0.0f)
             projectileLifetime -= Time.deltaTime;
-        else Destroy(gameObject);
+        else Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -78,6 +78,12 @@ public class ProjectileCombatController : UdonSharpBehaviour
         linkedWeapon._hitPlayerId = playerController.linkedPlayer.playerId;
         linkedWeapon.DamagePlayerLocal();
         Debug.Log("Bullet damaged player");
+
+        if (destroyOnEnter)
+        {
+            Debug.Log("Destroying bullet.");
+            Destroy(this.gameObject);
+        }
     }
 
     UdonBehaviour GetBehaviour(GameObject obj)

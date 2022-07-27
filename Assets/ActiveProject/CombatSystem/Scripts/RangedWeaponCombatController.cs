@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.SDK3.Components;
 using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
 
@@ -29,8 +30,6 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     public float muzzleVelocity;
     [Tooltip("Location at which the projectile is spawned")]
     public Transform bulletSpawn;
-    [Tooltip("The unique bullet prefab for this weapon. It will be updated on Start() if the stats dont match.")]
-    public GameObject bulletPrefab;
 
     [Header("Reload Settings")]
     [Tooltip("If enabled, each shot must be rechambered manually. Think pump action shotties, or bolt action snipers. Turning this on will disable automatic fire.")]
@@ -53,9 +52,8 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     public float bloomDecayDelay = 0.0f;
 
     [Header("External References")]
-    [Tooltip("If a bullet prefab for this weapon isnt defined, one will be made on Start() for this weapon.\n\nPlease note, that EACH INSTANCE of the weapon creates its own prefab. It is HIGHLY ENCOURAGED you create and link a copy of the bullet prefab.")]
     public VRC_Pickup pickupComponent;
-    public GameObject defaultBulletPrefab;
+    public GameObject bulletPrefab;
     public Collider[] nonTriggerChildColliders;
 
     // Externally set
@@ -71,7 +69,7 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     bool triggerDown = false;
     float currentBloom = 0.0f;
     VRCPlayerApi localPlayer;
-    ProjectileCombatController bulletBehaviour;
+    //ProjectileCombatController bulletBehaviour;
 
     // Timers
     float timerRefire = 0.0f;
@@ -85,21 +83,12 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     {
         if (bulletPrefab == null)
         {
-            bulletPrefab = VRCInstantiate(defaultBulletPrefab);
+            bulletPrefab = Instantiate(bulletPrefab);
             bulletPrefab.SetActive(false);
         }
 
         localPlayer = Networking.LocalPlayer;
-
-        if(pickupComponent == null)
-            pickupComponent = (VRC_Pickup)GetComponent(typeof(VRC_Pickup));
-
-        bulletBehaviour = bulletPrefab.GetComponent<ProjectileCombatController>();
-        //bulletBehaviour.projectileDamage = projectileDamage;
-        //bulletBehaviour.projectileName = $"{weaponName}_round";
-        //bulletBehaviour.projectileLifetime = projectileLifespan;
-        //bulletBehaviour.destroyOnEnter = destroyOnEnter;
-        bulletBehaviour.linkedWeapon = this;
+        pickupComponent = (VRC_Pickup)GetComponent(typeof(VRC_Pickup));
 
         // Pump/Lever/Bolt/etc action weapons should not fire automatically.
         if (rechamberEachShot)
@@ -155,13 +144,11 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
 
     public override void OnPickup()
     {
-        bulletBehaviour.owner = pickupComponent.currentPlayer;
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = true;
     }
     public override void OnDrop()
     {
-        bulletBehaviour.owner = null;
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = false;
         ReloadWeapon();
@@ -171,48 +158,73 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     {
         //int spreadLength = (spreadPattern == null) ? -1 : spreadPattern.Length;
         //Debug.Log($"Weapon {weaponName} for player {player.displayName}[{player.playerId}]:" +
-        //    $"\nOwner: {player.isInstanceOwner} Spread: {spreadLength} Index: {spreadIndex}");
+        //    $"\nOwner: {player.isMaster} Spread: {spreadLength} Index: {spreadIndex}");
     }
 
     // ========== PUBLIC ==========
 
-    [HideInInspector][UdonSynced] public int _hitPlayerId;
+    [HideInInspector] public int _hitPlayerId;
+    [UdonSynced][FieldChangeCallback(nameof(SyncedHitPlayerId))] int _syncedHitPlayerId;
+
+    // We use a callback to ensure we run damage as soon as a change occurs.
+    int SyncedHitPlayerId
+    {
+        set
+        {
+            Debug.Log($"Received new hit player: {value}");
+            _syncedHitPlayerId = value;
+            DamagePlayerGlobal();
+        }
+        get => _syncedHitPlayerId;
+    }
 
     public void DamagePlayerLocal()
     {
         Debug.Log("Damage - Local phase");
-        if (Networking.GetOwner(gameObject).playerId != localPlayer.playerId)
+
+        if (!Networking.IsOwner(localPlayer, gameObject))
         {
             Debug.Log($"{weaponName} cannot damage player, not owned by local player.");
             return;
         }
 
-        RequestSerialization();
-        this.SendCustomNetworkEvent(NetworkEventTarget.All, "DamagePlayerGlobal");
+        if (SyncedHitPlayerId != _hitPlayerId)
+        {
+            SyncedHitPlayerId = _hitPlayerId;
+            RequestSerialization();
+        }
+        else this.SendCustomNetworkEvent(NetworkEventTarget.All, "DamagePlayerGlobal");
     }
 
     public void DamagePlayerGlobal()
     {
-        Debug.Log("Damage - Global phase");
-        VRCPlayerApi hitPlayer = VRCPlayerApi.GetPlayerById(_hitPlayerId);
-        if (hitPlayer.isLocal)
+        Debug.Log($"Damage - Global phase");
+        VRCPlayerApi hitPlayer = VRCPlayerApi.GetPlayerById(SyncedHitPlayerId);
+        if (hitPlayer != null && hitPlayer.isLocal)
         {
             localPlayerController._damage = projectileDamage;
             localPlayerController.DamagePlayer();
         }
+        else Debug.Log($"Did not damage player: null={hitPlayer == null} local={SyncedHitPlayerId == localPlayer.playerId}");
     }
 
     public void SpawnBulletGlobal()
     {
         Vector3 angles = Random.insideUnitCircle * currentBloom;
         var adjustedDirection = Quaternion.Euler(angles) * bulletSpawn.rotation;
-        var bullet = VRCInstantiate(bulletPrefab);
+        var bullet = Instantiate(bulletPrefab);
 
         bullet.SetActive(true);
         bullet.transform.position = bulletSpawn.position;
         bullet.transform.rotation = adjustedDirection;
         bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * muzzleVelocity;
-        Debug.Log("Bullet Spawned");
+
+        var bulletBehaviour = bullet.GetComponent<ProjectileCombatController>();
+        //bulletBehaviour.projectileDamage = projectileDamage;
+        //bulletBehaviour.projectileName = $"{weaponName}_round";
+        //bulletBehaviour.projectileLifetime = projectileLifespan;
+        //bulletBehaviour.destroyOnEnter = destroyOnEnter;
+        bulletBehaviour.linkedWeapon = this;
     }
 
     // ========== PRIVATE ==========

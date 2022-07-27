@@ -53,7 +53,6 @@ public class LobbyPlayerJoinButton : UdonSharpBehaviour
     {
         // When the master recieves new data, update the lobby.
         debugText.text += $"\nT{team} Got data: ";
-
         SendLobbyInteractionEvent();
     }
 

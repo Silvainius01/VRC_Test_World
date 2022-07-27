@@ -4,7 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common;
 using VRC.Udon.Common.Interfaces;
+
+
+/*
+ * TODO:
+ *  - Add "cancel game" button
+ *  - Add "master start only" toggle [synced]
+ *  - Add "auto balance" toggle [synced]
+ *  - Add "show colliders" button [local]
+ *  - Add "avatar-sized colliders" button [synced]
+ */
 
 // This is not really intended to be used as is.
 // Instead, it is instead to house the code for a functional lobby
@@ -17,11 +28,11 @@ public class LobbyController : UdonSharpBehaviour
     public int minPlayers = 2;
 
     [Header("Team Settings")]
-    [Tooltip("If enabled, players must form teams manually.\n\nIf disabled, team 0 will be marked as the neutral team, and all other UIs will be disabled.")]
+    [Tooltip("If enabled, players must form teams manually.\n\nIf disabled, the lobbyTrigger adds people to the neutral team, and are distributed randomly.")]
     public bool joinByTeam = false;
-    [Tooltip("The number of teams in this game mode. Set to one if FFA, PvE, co-op, etc.")]
+    [Tooltip("The number of teams in this game mode. Set to one if FFA, PvE, co-op, etc.\n\nNOTE: at least 3 teams are needed for proper shuffling. One neutral, two opposed.")]
     public int numTeams = 1;
-    [Tooltip("If this is a valid team, members will be randomly placed among other teams.")]
+    [Tooltip("If this is a valid team, members will be randomly placed among other teams.\n\nIf joinByTeam is off, then this will be team 0 by default.")]
     public int neutralTeam = 0;
     [Tooltip("If enabled, the lobby will never allow more X players on a team.")]
     public bool enableTeamLimits = false;
@@ -35,7 +46,7 @@ public class LobbyController : UdonSharpBehaviour
     public GameObject[] teamUiObjects;
 
     [Header("Synced Player Modifiables")]
-    [Tooltip("If enabled, will attempt to make teams as even as possible. Otherwise, teams are random. Ignored if teams are formed manually.")]
+    [Tooltip("[unused] If enabled, will attempt to make teams as even as possible. Otherwise, teams are random. Ignored if teams are formed manually.")]
     public bool autoBalanceTeams = true;
     [Tooltip("If enabled, only the master of the world can start the game.")]
     public bool masterStartOnly = true;
@@ -47,19 +58,21 @@ public class LobbyController : UdonSharpBehaviour
     [Header("Debug")]
     public Text debugText;
 
-    // Hidden
-    [HideInInspector] public string scriptType = "LobbyController";
-
     // Private vars
     int currentPlayers;
-    [UdonSynced] int[] playerSlots;
-    [UdonSynced] int[] playerTeams;
     VRCPlayerApi localPlayer;
     VRCPlayerApi[] allPlayers;
     Text[] teamJoinTexts;
     Text[] teamPlayerTexts;
     Button[] teamJoinButtons;
     Text startButtonText;
+    LobbyPlayerTriggerController lobbyAreaController;
+
+    // Private synced
+    [UdonSynced] bool lobbyStartedSynced;
+    [UdonSynced] int[] playerSlots;
+    [UdonSynced] int[] playerTeams;
+    [UdonSynced] int[] teamPlayerCounts;
 
     #region ========== MONO BEHAVIOUR ==========
 
@@ -70,6 +83,7 @@ public class LobbyController : UdonSharpBehaviour
 
         localPlayer = Networking.LocalPlayer;
         startButtonText = startButton.GetComponentInChildren<Text>();
+        lobbyAreaController = GetComponentInChildren<LobbyPlayerTriggerController>();
 
         InitPlayerSlots();
         InitTeamSlots();
@@ -83,19 +97,39 @@ public class LobbyController : UdonSharpBehaviour
     {
         debugText.text += "\nLobby received data: ";
         var localPlayer = Networking.LocalPlayer;
-        if (!localPlayer.IsOwner(this.gameObject) && localPlayer.isMaster)
+        if (localPlayer.isMaster && !localPlayer.IsOwner(this.gameObject))
         {
             Networking.SetOwner(localPlayer, this.gameObject);
             debugText.text += " master -> owner.";
         }
-        UpdateLobby();
+        UpdateLobbyLocal();
+
+        debugText.text += $" start={lobbyStartedSynced}";
+
+        //if (lobbyStartedSynced)
+        //{
+        //    StartGameLobbyPostSync();
+        //    lobbyStartedSynced = false;
+        //}
+    }
+    public override void OnPostSerialization(SerializationResult result)
+    {
+        if (!localPlayer.isMaster)
+            return;
+
+        Debug.Log("Post serialize!!");
+        debugText.text += " Post serialize! ";
+        if (lobbyStartedSynced)
+        {
+            // Fire the start lobby for everyone else.
+            SendCustomNetworkEvent(NetworkEventTarget.All, "StartGameLobbyGlobal");
+        }
     }
 
     public override void OnPlayerJoined(VRCPlayerApi player) 
     {
         // sync the lobby to new players
-        if (player.isMaster)
-            RequestSerialization();
+        SyncBehaviour();
     }
     public override void OnPlayerLeft(VRCPlayerApi player)
     {
@@ -106,9 +140,14 @@ public class LobbyController : UdonSharpBehaviour
     public override void Interact()
     {
         if (currentPlayers >= minPlayers)
-            if (localPlayer.isMaster || !masterStartOnly)
+            if (localPlayer.isMaster)
             {
-                this.SendCustomNetworkEvent(NetworkEventTarget.All, "StartGameLobby");
+                StartGameLobbyLocal();
+                return;
+            }
+            else if(!masterStartOnly)
+            {
+                this.SendCustomNetworkEvent(NetworkEventTarget.Owner, "StartGameLobbyLocal");
                 return;
             }
         debugText.text = $"Attempted start:\nm:{localPlayer.isMaster || !masterStartOnly} p:{currentPlayers >= minPlayers}";
@@ -135,7 +174,7 @@ public class LobbyController : UdonSharpBehaviour
             {
                 playerTeams[playerIndex] = team;
                 debugText.text += "Swapped teams.";
-                UpdateLobby();
+                UpdateLobbyGlobal();
             }
             else
             {
@@ -150,6 +189,8 @@ public class LobbyController : UdonSharpBehaviour
         }
     }
 
+    public void RemovePlayerFromLobby() => RemovePlayerFromLobbyInternal(_player);
+
     // outputs to _team. Super scuffed.
     public void GetPlayerTeam() => _team = GetPlayerTeamInternal(_player);
     private int GetPlayerTeamInternal(VRCPlayerApi player)
@@ -160,38 +201,53 @@ public class LobbyController : UdonSharpBehaviour
         return -1;
     }
 
-    public void StartGameLobby()
+    public void StartGameLobbyLocal()
     {
-        debugText.text = $"Lobby starting: {(localPlayer.isMaster ? "Emitted" : "Received")}";
-
-        // Disable lobby buttons
-        startButton.interactable = false;
-        startButtonText.text = "Game Started!";
-
-        foreach(var button in teamJoinButtons)
+        if (!localPlayer.isMaster)
         {
-            button.interactable = false;
-        }
-        int localIndex = -1;
-        for (int i = 0; i < maxPlayers; ++i)
-        {
-            if (playerSlots[i] >= 0 && allPlayers[i].isLocal)
-            {
-                localIndex = i;
-                break;
-            }
+            Debug.LogError("Cannot start lobby: not master");
+            debugText.text = "Cannot start lobby: not master ";
+            return;
         }
 
-        debugText.text += $"\nStarting CC. localIndex: {localIndex}";
-        combatController._localIndex = localIndex;
-        combatController.playerSlots = playerSlots;
-        combatController.playerTeams = playerTeams;
-        combatController.allPlayers = allPlayers;
-        combatController.StartGame();
+        lobbyStartedSynced = true;
+        debugText.text = "Starting lobby: ";
+        ShuffleNeutralPlayers();
+
+        debugText.text += "\nEmitting lobby data";
+
+        // Update the lobby for all players.
+        UpdateLobbyGlobal();
     }
-    #endregion
+    public void StartGameLobbyGlobal()
+    {
+        if (lobbyStartedSynced)
+        {
+            lobbyStartedSynced = false;
+            StartGameLobbyPostSync();
+        }
+        else
+        {
+            Debug.LogError("Lobby start failed: start sync false");
+            debugText.text = "Lobby start failed: start sync false";
+        }
+    }
 
-    #region ========== PRIVATE ==========
+    public void ResetGameLobby()
+    {
+        debugText.text = $"Resetting lobby";
+
+        startButton.interactable = true;
+        startButtonText.text = "Start Game";
+
+        foreach (var button in teamJoinButtons)
+        {
+            button.interactable = !joinByTeam;
+        }
+    }
+#endregion
+
+#region ========== PRIVATE ==========
 
     // Will always return false for teamId < 0
     private bool IsTeamFull(int team)
@@ -227,30 +283,29 @@ public class LobbyController : UdonSharpBehaviour
 
     private void SyncBehaviour()
     {
-        var localPlayer = Networking.LocalPlayer;
-
         if (!localPlayer.IsOwner(this.gameObject))
-            return; // Networking.SetOwner(localPlayer, this.gameObject);
-
+            return;
+        debugText.text += " Sync.";
         RequestSerialization();
     }
 
-    private void UpdateLobby()
+    private void UpdateLobbyGlobal()
     {
         debugText.text += "\nUpdating lobby:";
-        if (Networking.LocalPlayer.IsOwner(this.gameObject))
-        {
-            debugText.text += " Sync.";
-            SyncBehaviour();
-        }
-
+        SyncBehaviour();
+        UpdateLobbyLocal();
+    }
+    private void UpdateLobbyLocal()
+    {
         currentPlayers = 0;
 
         // Clear Team Texts
-        foreach (var text in teamPlayerTexts)
-            text.text = string.Empty;
-        foreach (var text in teamJoinTexts)
-            text.text = "Join";
+        for (int i = 0; i < numTeams; ++i)
+        {
+            teamJoinTexts[i].text = "Join";
+            teamPlayerTexts[i].text = string.Empty;
+            teamPlayerCounts[i] = 0;
+        }
 
         for (int i = 0; i < maxPlayers; ++i)
             if (playerSlots[i] > -1)
@@ -264,6 +319,7 @@ public class LobbyController : UdonSharpBehaviour
                     teamPlayerTexts[team].text += $"\n{allPlayers[i].displayName}";
                     if (playerSlots[i] == Networking.LocalPlayer.playerId)
                         teamJoinTexts[team].text = "Leave";
+                    ++teamPlayerCounts[team];
                 }
             }
         debugText.text += " Done.";
@@ -303,6 +359,7 @@ public class LobbyController : UdonSharpBehaviour
         teamJoinTexts = new Text[numTeams];
         teamPlayerTexts = new Text[numTeams];
         teamJoinButtons = new Button[numTeams];
+        teamPlayerCounts = new int[numTeams];
 
         // Neutral Team is invalid if:
         //      - It is less than zero OR
@@ -310,6 +367,10 @@ public class LobbyController : UdonSharpBehaviour
         // If join by team is off, set neutral team to be team0, otherwise there is no neutral team.
         if (neutralTeam < 0 || neutralTeam >= numTeams)
             neutralTeam = joinByTeam ? -1 : 0;
+
+        // Disable neutral join area if we are joining teams directly.
+        if (joinByTeam)
+            lobbyAreaController.triggerArea.enabled = false;
 
         for (int i = 0; i < numTeams; ++i)
         {
@@ -327,9 +388,12 @@ public class LobbyController : UdonSharpBehaviour
             teamPlayerTexts[i] = teamUiObject.transform.Find("Players/PlayerText").GetComponent<Text>();
             teamPlayerTexts[i].text = string.Empty;
 
-            // Disable all other UIs
-            if (!joinByTeam && i != neutralTeam)
-                teamUiObject.SetActive(false);
+            if (!joinByTeam)
+            {
+                // Only the neutral team is visible
+                teamUiObject.SetActive(i == neutralTeam);
+                teamJoinButtons[i].interactable = false;
+            }
         }
     }
 
@@ -342,20 +406,20 @@ public class LobbyController : UdonSharpBehaviour
         }
         if (IsTeamFull(team))
         {
-            Debug.LogWarning($"Cannot add player: team {_team} full");
+            Debug.LogWarning($"Cannot add player: team {team} full");
             return;
         }
 
         for (int i = 0; i < maxPlayers; ++i)
             if (playerSlots[i] < 0)
             {
-                playerSlots[i] = _player.playerId;
-                playerTeams[i] = _team;
-                allPlayers[i] = _player;
+                playerSlots[i] = player.playerId;
+                playerTeams[i] = team;
+                allPlayers[i] = player;
                 break;
             }
 
-        UpdateLobby();
+        UpdateLobbyGlobal();
     }
 
     private void RemovePlayerFromLobbyInternal(VRCPlayerApi player)
@@ -367,7 +431,7 @@ public class LobbyController : UdonSharpBehaviour
         }
 
         for (int i = 0; i < maxPlayers; ++i)
-            if (playerSlots[i] == _player.playerId)
+            if (playerSlots[i] == player.playerId)
             {
                 playerSlots[i] = -1;
                 playerTeams[i] = -1;
@@ -375,8 +439,127 @@ public class LobbyController : UdonSharpBehaviour
                 Debug.Log($"Removed player from slot {i}");
             }
 
-        UpdateLobby();
+        UpdateLobbyGlobal();
     }
 
-    #endregion
+    private void ShuffleNeutralPlayers()
+    {
+        // Cannot shuffle if not the owner, or there is there are less than 2 teams.
+        // (at least 3 are needed: one neutral, two opposed)
+        bool canShuffle = localPlayer.isMaster && numTeams > 2;
+        Debug.Log($"Can Shuffle: {localPlayer.isMaster} && {numTeams > 2}");
+
+        // Cant shuffle if there is no neutral team, or if there is no on the neutral team.
+        bool neutralTeamActive = neutralTeam >= 0 && teamPlayerCounts[neutralTeam] > 0;
+        Debug.Log($"neutralTeamActive: {neutralTeam >= 0} && {teamPlayerCounts[neutralTeam] > 0}");
+
+        if (!canShuffle || !neutralTeamActive)
+            return;
+
+        debugText.text += "\nShuffling players";
+
+        int smallestTeam = neutralTeam;
+        for(int i = 0; i < maxPlayers; ++i)
+        {
+            if(playerSlots[i] >= 0 && playerTeams[i] == neutralTeam)
+            {
+                smallestTeam = GetRandomSmallestTeam();
+                if (smallestTeam != neutralTeam)
+                    playerTeams[i] = smallestTeam;
+                else playerTeams[i] = GetRandomTeam();
+            }
+        }
+    }
+
+    // Returns a random team from the set of those with the least players
+    private int GetRandomSmallestTeam()
+    {
+        // McGuiver a List<int>
+        int count = 0; // List.Count
+        int smallestTeam = neutralTeam; // List[0]
+        int[] smallTeams = new int[numTeams]; // List.Capacity
+
+        for (int i = 0; i < numTeams; ++i)
+        {
+            if (i == neutralTeam)
+                continue;
+
+            // New minimum is found if:
+            //  - It is less than the prev smallest team
+            //  - It is the first non-neutral team
+            if (teamPlayerCounts[i] < teamPlayerCounts[smallestTeam] || smallestTeam == neutralTeam)
+            {
+                // Clear the list and set this team as the first entry
+                count = 1;
+                smallestTeam = i;
+                smallTeams[0] = i;
+            }
+            else if (teamPlayerCounts[i] == teamPlayerCounts[smallestTeam])
+            {
+                // If a team is the same size, add it to the list.
+                smallTeams[count] = i;
+                ++count;
+            };
+        }
+
+        // Return a random smallest team, or the neutral team if none found somehow.
+        return count > 0 ? smallTeams[Random.Range(0, count)] : neutralTeam;
+    }
+
+    // Return a random non-neutral team.
+    private int GetRandomTeam()
+    {
+        if (numTeams == 1)
+        {
+            Debug.LogError("Cannot get random team: only one exists!");
+            return 0;
+        }
+        else if(numTeams == 2 && (neutralTeam == 0 || neutralTeam == 1))
+        {
+            Debug.LogError("Cannot get random team: only one non-neutral one exists!");
+            return (neutralTeam + 1) % 2; // 0 + 1 = 1 // 1 + 1 = 0
+        }
+        
+        int r = neutralTeam;
+        while (r == neutralTeam)
+            r = Random.Range(0, numTeams);
+        return r;
+    }
+
+    private void StartGameLobbyPostSync()
+    {
+        if(!localPlayer.isMaster)
+            debugText.text = $"Lobby starting: Received.";
+        debugText.text += $"\nYOU: {localPlayer.displayName}[{localPlayer.playerId}]";
+
+        // Disable lobby interaction
+        startButton.interactable = false;
+        startButtonText.text = "Game Started!";
+        lobbyAreaController.triggerArea.enabled = false;
+        
+        for (int i = 0; i < numTeams; ++i)
+        {
+            teamUiObjects[i].SetActive(i != neutralTeam);
+            teamJoinButtons[i].interactable = false;
+        }
+
+        int localIndex = -1;
+
+        for (int i = 0; i < maxPlayers; ++i)
+        {
+            if (playerSlots[i] >= 0 && allPlayers[i].isLocal)
+            {
+                localIndex = i;
+                break;
+            }
+        }
+
+        debugText.text += $"\nStarting CC. localIndex: {localIndex}";
+        combatController._localIndex = localIndex;
+        combatController.playerSlots = playerSlots;
+        combatController.playerTeams = playerTeams;
+        combatController.allPlayers = allPlayers;
+        combatController.StartGame();
+    }
+#endregion
 }
