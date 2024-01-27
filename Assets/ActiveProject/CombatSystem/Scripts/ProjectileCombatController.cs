@@ -13,11 +13,21 @@ public class ProjectileCombatController : UdonSharpBehaviour
     public string projectileName;
     public float projectileDamage;
     public float projectileLifetime;
+    public float projectileGravity;
     public bool destroyOnEnter;
     public VRCPlayerApi owner;
     public RangedWeaponCombatController linkedWeapon;
 
+    public Rigidbody rbody;
+    public Vector3 gravityCache;
+
     // ========== MONO BEHAVIOUR ==========
+
+    private void Start()
+    {
+        rbody = gameObject.GetComponent<Rigidbody>();
+        Debug.Log($"Rbody got: {rbody == null}");
+    }
 
     private void OnEnable()
     {
@@ -31,6 +41,11 @@ public class ProjectileCombatController : UdonSharpBehaviour
         projectileLifetime = linkedWeapon.projectileLifespan;
         destroyOnEnter = linkedWeapon.destroyOnEnter;
         owner = linkedWeapon.pickupComponent.currentPlayer;
+        projectileGravity = linkedWeapon.projectileGravity;
+
+        if (rbody == null)
+            rbody = gameObject.GetComponent<Rigidbody>();
+        gravityCache = -Vector3.up * projectileGravity * rbody.mass;
 
         if (owner != null && !owner.isLocal)
         {
@@ -46,6 +61,11 @@ public class ProjectileCombatController : UdonSharpBehaviour
         if (projectileLifetime > 0.0f)
             projectileLifetime -= Time.deltaTime;
         else Destroy(this.gameObject);
+    }
+
+    private void FixedUpdate()
+    {
+        rbody.AddForce(gravityCache);
     }
 
     private void OnTriggerEnter(Collider collider)

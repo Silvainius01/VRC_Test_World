@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
 public class PlayerCombatController : UdonSharpBehaviour
 {
     [Header("Health Settings")]
     public float maxHealth;
-    [UdonSynced] public float currentHealth;
     public Slider healthSlider;
 
     [Header("Colliders")]
@@ -32,6 +32,10 @@ public class PlayerCombatController : UdonSharpBehaviour
     // Hidden
     [HideInInspector] public string scriptType = "PlayerCombatController";
 
+    // Synced
+    [UdonSynced] public float currentHealth;
+    [UdonSynced] bool respawnOnSync = false;
+
     // Private
     bool inited = false;
     float respawnTime;
@@ -39,6 +43,8 @@ public class PlayerCombatController : UdonSharpBehaviour
     Collider[] bodyColliders;
     MeshRenderer[] bodyColliderMeshs;
     LobbyController lobby;
+    bool isRespawning;
+    float respawnTimer = 0.0f;
 
     private void Start()
     {
@@ -80,6 +86,10 @@ public class PlayerCombatController : UdonSharpBehaviour
                 var headTrackingData = linkedPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head);
                 canvasParent.transform.position = headTrackingData.position;
                 canvasParent.transform.rotation = headTrackingData.rotation;
+
+                if (isRespawning && respawnTimer <= 0.0f)
+                    RespawnPlayerLocal();
+                else respawnTimer -= Time.deltaTime;
             }
         }
     }
@@ -121,6 +131,12 @@ public class PlayerCombatController : UdonSharpBehaviour
         }
     }
 
+    //========== U# BEHAVIOUR ==========
+
+    public override void OnDeserialization()
+    {
+    }
+
     // ========== PUBLIC ==========
 
     public void InitController()
@@ -149,15 +165,13 @@ public class PlayerCombatController : UdonSharpBehaviour
         {
             currentHealth = maxHealth;
             canvasParent.SetActive(true);
-            foreach (var renderer in bodyColliderMeshs)
-                renderer.enabled = false;
+            SetCollidersVisible(false);
             debugText.text += " off";
             UpdateHealthSlider();
         }
         else
         {
-            foreach (var renderer in bodyColliderMeshs)
-                renderer.enabled = true;
+            SetCollidersVisible(combatController.gameLobby.uiSettings.showColliders);
             canvasParent.SetActive(false);
             debugText.text += " on";
         }
@@ -189,12 +203,59 @@ public class PlayerCombatController : UdonSharpBehaviour
             currentHealth -= _damage;
 
             UpdateHealthSlider();
-            if (currentHealth < 0)
+            if (currentHealth <= 0)
             {
-                localPlayer.EnablePickups(false);
-                SendCustomEventDelayedSeconds("RespawnPlayer", respawnTime);
+                PlayerDeathLocal();
             }
         }
+    }
+
+    public void PlayerDeathLocal()
+    {
+        var pickupLeft = localPlayer.GetPickupInHand(VRC_Pickup.PickupHand.Left);
+        var pickupRight = localPlayer.GetPickupInHand(VRC_Pickup.PickupHand.Right);
+
+        debugText.text += "\nYou Died, repsawning.";
+        isRespawning = true;
+        respawnTimer = respawnTime;
+        localPlayer.Immobilize(true);
+
+        // Drop weapons and prevent pickup
+        if (pickupLeft != null)
+            pickupLeft.Drop();
+        if (pickupRight != null)
+            pickupRight.Drop();
+        localPlayer.EnablePickups(false);
+
+        this.SendCustomNetworkEvent(NetworkEventTarget.All, "PlayerDeathGlobal");
+    }
+    public void PlayerDeathGlobal()
+    {
+        bodyColliderParent.SetActive(false);
+    }
+
+    public void RespawnPlayerLocal()
+    {
+        debugText.text += "\nRespawned!";
+
+        // Renable collisions, weapons, movement
+        localPlayer.Immobilize(false);
+        localPlayer.EnablePickups(true);
+
+        // tp to a random spawn
+        var t = GetRandomTeamSpawn();
+        localPlayer.TeleportTo(t.position, t.rotation);
+
+        // Reset hp
+        isRespawning = false;
+        currentHealth = maxHealth;
+        UpdateHealthSlider();
+
+        this.SendCustomNetworkEvent(NetworkEventTarget.All, "RespawnPlayerGlobal");
+    }
+    public void RespawnPlayerGlobal()
+    {
+        bodyColliderParent.SetActive(true);
     }
 
     // ========== PRIVATE ==========
@@ -202,17 +263,6 @@ public class PlayerCombatController : UdonSharpBehaviour
     void UpdateHealthSlider()
     {
         healthSlider.value = currentHealth / maxHealth;
-    }
-
-    void RespawnPlayer()
-    {
-        // tp to a random spawn
-        var t = GetRandomTeamSpawn();
-        localPlayer.TeleportTo(t.position, t.rotation);
-        
-        // Reset hp
-        currentHealth = maxHealth;
-        UpdateHealthSlider();
     }
 
     Transform GetRandomTeamSpawn()
@@ -225,5 +275,11 @@ public class PlayerCombatController : UdonSharpBehaviour
     UdonBehaviour GetBehaviour(GameObject obj)
     {
         return (UdonBehaviour)obj.GetComponent(typeof(UdonBehaviour));
+    }
+
+    void SetCollidersVisible(bool value)
+    {
+        foreach (var meshRenderer in bodyColliderMeshs)
+            meshRenderer.enabled = value;
     }
 }

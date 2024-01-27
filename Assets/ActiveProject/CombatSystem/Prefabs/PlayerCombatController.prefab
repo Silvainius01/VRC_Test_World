@@ -36,7 +36,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -79}
+  m_AnchoredPosition: {x: 0, y: -100}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6266159138764712973
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.526
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -482,8 +482,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -5, y: 0}
+  m_SizeDelta: {x: -10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6266159139926797185
 CanvasRenderer:
@@ -618,7 +618,6 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 6266159140421252196}
   maxHealth: 1000
-  currentHealth: 1000
   healthSlider: {fileID: 6266159138764712973}
   bodyColliderParent: {fileID: 6266159139056035887}
   bodyColliderHeight: 1
@@ -630,6 +629,7 @@ MonoBehaviour:
   ffDamageMult: 0
   combatController: {fileID: 0}
   scriptType: PlayerCombatController
+  currentHealth: 1000
   _damage: 0
 --- !u!114 &6266159140421252196
 MonoBehaviour:

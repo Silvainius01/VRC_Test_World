@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
 using VRC.SDK3.Components;
 
 /*
@@ -15,6 +16,12 @@ using VRC.SDK3.Components;
 public class CombatController : UdonSharpBehaviour
 {
     [Header("Scenario Settings")]
+    [Tooltip("How long the game lasts (in seconds)")]
+    public float runSpeed = 4.0f;
+    [Tooltip("How long the game lasts (in seconds)")]
+    public float jumpImpulse = 3.0f;
+    [Tooltip("How long the game lasts (in seconds)")]
+    public float strafeSpeed = 3.0f;
     [Tooltip("How long the game lasts (in seconds)")]
     public float gameLength = 5 * 60;
     [Tooltip("The parent objects for all team spawn locations. If the object has no children, the parent will be used instead.")]
@@ -50,7 +57,7 @@ public class CombatController : UdonSharpBehaviour
     int maxPlayers;
     bool gameStarted;
     VRCPlayerApi localPlayer;
-    GameObject[] allControllers;
+    public GameObject[] allControllers;
 
     // Timers
     float timerGameLength;
@@ -65,6 +72,11 @@ public class CombatController : UdonSharpBehaviour
 
         allTeamSpawns = new GameObject[numTeams][];
         allControllers = new GameObject[maxPlayers];
+
+        localPlayer.SetRunSpeed(runSpeed);
+        localPlayer.SetJumpImpulse(jumpImpulse);
+        localPlayer.SetStrafeSpeed(strafeSpeed);
+        localPlayer.SetWalkSpeed(runSpeed / 2);
 
         foreach (var controller in playerCombatPool.Pool)
         {
@@ -111,13 +123,14 @@ public class CombatController : UdonSharpBehaviour
             timerGameLength -= Time.deltaTime;
 
             // End the game
-            if(timerGameLength <= 0.0f)
+            if(timerGameLength <= 0.0f && localPlayer.IsOwner(gameObject))
             {
-                EndGame();
-                gameLobby.ResetGameLobby();
+                SendCustomNetworkEvent(NetworkEventTarget.All, "EndGame");
             }
         }
     }
+
+    // ========== U# BEHAVIOUR ==========
 
     // ========== PUBLIC ==========
 
@@ -140,31 +153,36 @@ public class CombatController : UdonSharpBehaviour
 
         for (int i = 0; i < maxPlayers; ++i)
         {
-            debugText.text += $"\nP{i} ";
             if (playerSlots[i] >= 0)
             {
+                debugText.text += $"\nP{i} ";
+
                 int playerTeam = playerTeams[i];
                 GameObject controller = playerCombatPool.Pool[i];
 
                 controller.SetActive(true);
                 allControllers[i] = controller;
 
-                var playerCombatCont = GetBehaviour(controller);
+                var playerCombatCont = controller.GetComponent<PlayerCombatController>();
                 playerCombatCont.enabled = allPlayers[i].isLocal; // Only enable the local controller.
-                playerCombatCont.SetProgramVariable("localTeam", playerTeams[_localIndex]);
-                playerCombatCont.SetProgramVariable("playerTeam", playerTeams[i]);
-                playerCombatCont.SetProgramVariable("linkedPlayer", allPlayers[i]);
-                playerCombatCont.SendCustomEvent("InitController");
+                playerCombatCont.localTeam = playerTeams[_localIndex];
+                playerCombatCont.playerTeam = playerTeams[i];
+                playerCombatCont.linkedPlayer = allPlayers[i];
+                playerCombatCont.InitController();
 
-                if(localPlayer.playerId == playerSlots[i])
-                    foreach(var weaponObject in rangedWeaponObjects)
+                if (localPlayer.playerId == playerSlots[i])
+                {
+                    foreach (var weaponObject in rangedWeaponObjects)
                     {
+                        // this remains generic to cover all weapon types.
                         var weaponBehavior = GetBehaviour(weaponObject);
                         weaponBehavior.SetProgramVariable("localPlayerController", playerCombatCont);
                     }
+
+                    playerCombatCont.RespawnPlayerLocal();
+                }
             }
         }
-
 
         gameStarted = true;
         timerGameLength = gameLength;
@@ -172,13 +190,11 @@ public class CombatController : UdonSharpBehaviour
 
     public void EndGame()
     {
+        debugText.text = "Game is ending:";
         for (int i = 0; i < maxPlayers; ++i)
         {
-            allControllers[i].SetActive(false);
-            if (playerSlots[i] >= 0)
-            {
-                allPlayers[i].Respawn();
-            }
+            if (allControllers[i] != null)
+                allControllers[i].SetActive(false);
         }
 
         allPlayers = null;
@@ -186,18 +202,12 @@ public class CombatController : UdonSharpBehaviour
         playerTeams = null;
         gameStarted = false;
         timerGameLength = 0.0f;
-    }
 
-    //public void GetPlayerCombatController()
-    //{
-    //    for(int i = 0; i < maxPlayers; ++i)
-    //    {
-    //        if(playerSlots[i] == _playerId)
-    //        {
-    //            _playerControllerRetval = GetBehaviour(allControllers[i]);
-    //        }
-    //    }
-    //}
+        debugText.text += $"\nRespawning {localPlayer.displayName}[{localPlayer.playerId}]";
+        // You'd think .Respawn() would work.
+        localPlayer.Respawn();
+        // localPlayer.TeleportTo(Vector3.zero, Quaternion.identity);
+    }
 
     // ========== PRIVATE ==========
 

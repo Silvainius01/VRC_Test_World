@@ -39,21 +39,15 @@ public class LobbyController : UdonSharpBehaviour
     [Tooltip("The maximum amount of players on a team if team size limits are on.")]
     public int maxTeamSize = 6;
 
+    [Header("Synced Player Modifiables")]
+    public LobbySettingsController uiSettings;
+
     [Header("External References")]
     public Canvas lobbyCanvas;
     public CombatController combatController;
     public Button startButton;
     public GameObject[] teamUiObjects;
 
-    [Header("Synced Player Modifiables")]
-    [Tooltip("[unused] If enabled, will attempt to make teams as even as possible. Otherwise, teams are random. Ignored if teams are formed manually.")]
-    public bool autoBalanceTeams = true;
-    [Tooltip("If enabled, only the master of the world can start the game.")]
-    public bool masterStartOnly = true;
-
-    [Header("Local Player Modifiables")]
-    [Tooltip("If enabled, player colliders will be rendered in game.")]
-    public bool showColliders = true;
 
     [Header("Debug")]
     public Text debugText;
@@ -136,8 +130,7 @@ public class LobbyController : UdonSharpBehaviour
         RemovePlayerFromLobbyInternal(player);
     }
 
-    // This is for starting the game.
-    public override void Interact()
+    public void StartGameButton()
     {
         if (currentPlayers >= minPlayers)
             if (localPlayer.isMaster)
@@ -145,12 +138,29 @@ public class LobbyController : UdonSharpBehaviour
                 StartGameLobbyLocal();
                 return;
             }
-            else if(!masterStartOnly)
+            else if(!uiSettings.masterStartOnly)
             {
                 this.SendCustomNetworkEvent(NetworkEventTarget.Owner, "StartGameLobbyLocal");
                 return;
             }
-        debugText.text = $"Attempted start:\nm:{localPlayer.isMaster || !masterStartOnly} p:{currentPlayers >= minPlayers}";
+        debugText.text = $"Attempted start:\nm:{localPlayer.isMaster || !uiSettings.masterStartOnly} p:{currentPlayers >= minPlayers}";
+    }
+
+    public void EndGameButton()
+    {
+        if (localPlayer.isMaster)
+        {
+            // End game for everyone locally
+            debugText.text = "EndGame Master:";
+            combatController.SendCustomNetworkEvent(NetworkEventTarget.All, "EndGame");
+            this.SendCustomNetworkEvent(NetworkEventTarget.All, "ResetGameLobby");
+            return;
+        }
+        else if (!uiSettings.masterStartOnly)
+        {
+            this.SendCustomNetworkEvent(NetworkEventTarget.Owner, "EndGameButton");
+            return;
+        }
     }
 
     #endregion
@@ -235,15 +245,33 @@ public class LobbyController : UdonSharpBehaviour
 
     public void ResetGameLobby()
     {
-        debugText.text = $"Resetting lobby";
+        debugText.text += $"\nResetting lobby";
 
         startButton.interactable = true;
         startButtonText.text = "Start Game";
 
-        foreach (var button in teamJoinButtons)
+        for(int i = 0; i < numTeams; ++i)
         {
-            button.interactable = !joinByTeam;
+            bool isActiveTeam = joinByTeam 
+                ? i != neutralTeam
+                : i == neutralTeam;
+
+            teamPlayerTexts[i].text = string.Empty;
+            teamJoinButtons[i].interactable = joinByTeam && isActiveTeam;
+            teamUiObjects[i].SetActive(isActiveTeam);
         }
+
+        if(!joinByTeam)
+            lobbyAreaController.triggerArea.enabled = true;
+
+        for (int i = 0; i < maxPlayers; ++i)
+        {
+            playerSlots[i] = -1;
+            playerTeams[i] = -1;
+        }
+
+        if(localPlayer.IsOwner(gameObject))
+            UpdateLobbyGlobal();
     }
 #endregion
 
@@ -464,9 +492,9 @@ public class LobbyController : UdonSharpBehaviour
             if(playerSlots[i] >= 0 && playerTeams[i] == neutralTeam)
             {
                 smallestTeam = GetRandomSmallestTeam();
-                if (smallestTeam != neutralTeam)
-                    playerTeams[i] = smallestTeam;
-                else playerTeams[i] = GetRandomTeam();
+                if (smallestTeam == neutralTeam)
+                    smallestTeam = GetRandomTeam();
+                SetPlayerTeamLocal(i, smallestTeam);
             }
         }
     }
@@ -478,9 +506,11 @@ public class LobbyController : UdonSharpBehaviour
         int count = 0; // List.Count
         int smallestTeam = neutralTeam; // List[0]
         int[] smallTeams = new int[numTeams]; // List.Capacity
+        string msg = string.Empty;
 
         for (int i = 0; i < numTeams; ++i)
         {
+            msg += $"\nTeam {i} count: {teamPlayerCounts[i]}";
             if (i == neutralTeam)
                 continue;
 
@@ -501,7 +531,7 @@ public class LobbyController : UdonSharpBehaviour
                 ++count;
             };
         }
-
+        debugText.text += msg;
         // Return a random smallest team, or the neutral team if none found somehow.
         return count > 0 ? smallTeams[Random.Range(0, count)] : neutralTeam;
     }
@@ -524,6 +554,18 @@ public class LobbyController : UdonSharpBehaviour
         while (r == neutralTeam)
             r = Random.Range(0, numTeams);
         return r;
+    }
+
+    /// <summary>
+    /// Only ran by the master when shuffling teams.
+    /// </summary>
+    private void SetPlayerTeamLocal(int player, int newTeam)
+    {
+        int currentTeam = playerTeams[player];
+        --teamPlayerCounts[currentTeam];
+        ++teamPlayerCounts[newTeam];
+        playerTeams[player] = newTeam;
+        debugText.text += $"\nSet P{player} to team {newTeam}";
     }
 
     private void StartGameLobbyPostSync()

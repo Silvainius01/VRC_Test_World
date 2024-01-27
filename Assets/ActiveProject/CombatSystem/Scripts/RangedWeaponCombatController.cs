@@ -1,6 +1,7 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.SDK3.Components;
 using VRC.Udon;
@@ -24,6 +25,8 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     [Header("Projectile Settings")]
     [Tooltip("If enabled, the fired projectile will be destroyed when it contacts another collider.")]
     public bool destroyOnEnter;
+    [Tooltip("How much the bullet is affected by gravity. 1 = normal, 0 = none, -1 is inverted, etc.")]
+    public float projectileGravity = 1;
     [Tooltip("How long the projectile is allowed to exist after being spawned")]
     public float projectileLifespan = 10.0f;
     [Tooltip("The speed of the projectile after being spawned")]
@@ -54,7 +57,12 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     [Header("External References")]
     public VRC_Pickup pickupComponent;
     public GameObject bulletPrefab;
+    public AudioSource audioSource;
+    public AudioClip[] muzzleSounds;
     public Collider[] nonTriggerChildColliders;
+    public Canvas weaponCanvas;
+    public Slider reloadSlider;
+    public Text ammoText;
 
     // Externally set
     [HideInInspector] public CombatController combatController;
@@ -103,6 +111,10 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
             reloadTime = 0.001f;
         }
 
+        reloadSlider.value = 0;
+        weaponCanvas.gameObject.SetActive(false);
+        ammoText.text = $"{magazineSize} / {magazineSize}";
+
         //if (combatController == null)
         //    Debug.LogError($"{gameObject.name} does not have combat controller set! Please add it to the combat controller.");
     }
@@ -110,7 +122,7 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
-        triggerDown = Input.GetKey(KeyCode.Space);
+        triggerDown = Input.GetMouseButton(0);
 #endif
 
         if (pickupComponent.IsHeld && pickupComponent.currentPlayer.isLocal)
@@ -146,12 +158,16 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
     {
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = true;
+
+        if (pickupComponent.currentPlayer.isLocal)
+            weaponCanvas.gameObject.SetActive(true);
     }
     public override void OnDrop()
     {
         foreach (var collider in nonTriggerChildColliders)
             collider.isTrigger = false;
         ReloadWeapon();
+        weaponCanvas.gameObject.SetActive(false);
     }
 
     public override void OnPlayerJoined(VRCPlayerApi player)
@@ -219,11 +235,11 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
         bullet.transform.rotation = adjustedDirection;
         bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * muzzleVelocity;
 
+        if (muzzleSounds.Length > 1)
+            audioSource.clip = muzzleSounds[Random.Range(0, muzzleSounds.Length)];
+        audioSource.Play();
+
         var bulletBehaviour = bullet.GetComponent<ProjectileCombatController>();
-        //bulletBehaviour.projectileDamage = projectileDamage;
-        //bulletBehaviour.projectileName = $"{weaponName}_round";
-        //bulletBehaviour.projectileLifetime = projectileLifespan;
-        //bulletBehaviour.destroyOnEnter = destroyOnEnter;
         bulletBehaviour.linkedWeapon = this;
     }
 
@@ -255,10 +271,13 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
         if(timerReload > 0.0f)
         {
             timerReload -= Time.deltaTime;
-            if(timerReload < 0.0f)
+            reloadSlider.value = Mathf.Max(0, 1 - (timerReload / reloadTime));
+            if(timerReload <= 0.0f)
             {
                 timerReload = 0.0f;
+                reloadSlider.value = 0;
                 roundsLeft = magazineSize;
+                ammoText.text = $"{roundsLeft} / {magazineSize}";
                 Debug.Log("Reload Done");
             }
             else return false;
@@ -293,6 +312,7 @@ public class RangedWeaponCombatController : UdonSharpBehaviour
         if (pickupComponent.IsHeld && pickupComponent.currentPlayer.isLocal)
         {
             --roundsLeft;
+            ammoText.text = $"{roundsLeft} / {magazineSize}";
             currentBloom = Mathf.Min(currentBloom + bloomPerShot, maxConeOfFireBloom);
             timerBloom = bloomDecayDelay; // Reset the bloom delay when the weapon fires
             timerRefire += 60.0f / roundsPerMin; // Refire is += to ensure that we get as close as possible to the exact fire rate.
